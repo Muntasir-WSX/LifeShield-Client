@@ -1,7 +1,7 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import useAxiosPublic from '../../Hooks/UseAxiosPublic';
-import PolicyCard from './PopularCard';
+import useAxiosPublic from "../../../Hooks/UseAxiosPublic"
+import PolicyCard from './PopularCard'
 
 
 const PopularPolicies = () => {

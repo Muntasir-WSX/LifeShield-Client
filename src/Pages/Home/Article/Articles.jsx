@@ -1,0 +1,72 @@
+import React from "react";
+import { useQuery } from "@tanstack/react-query";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Pagination, Autoplay } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/pagination";
+import { Link } from "react-router-dom";
+import { FaArrowRight } from "react-icons/fa";
+import ArticleCard from "./ArticleCard";
+import useAxiosPublic from "../../../Hooks/UseAxiosPublic";
+
+const Articles = () => {
+  const axiosPublic = useAxiosPublic();
+
+  const { data: blogs = [], isLoading } = useQuery({
+    queryKey: ["latestBlogs"],
+    queryFn: async () => {
+      const res = await axiosPublic.get("/latest-blogs");
+      return res.data;
+    },
+  });
+
+  if (isLoading)
+    return <div className="text-center py-20">Loading Insights...</div>;
+
+  return (
+    <section className="py-20 bg-white">
+      <div className="container mx-auto px-4">
+        <div className="flex justify-between items-end mb-12">
+          <div>
+            <h2 className="text-4xl font-black text-[#00332c]">
+              Health & Life Insights
+            </h2>
+            <p className="text-gray-500 mt-2">
+              Expert advice and latest news for your security
+            </p>
+          </div>
+          {/* All Blogs Link */}
+          <Link
+            to="/blog-details"
+            className="hidden md:flex items-center gap-2 text-green-600 font-bold hover:gap-4 transition-all"
+          >
+            Explore All Blogs <FaArrowRight />
+          </Link>
+        </div>
+
+<Swiper
+    modules={[Pagination, Autoplay]}
+    spaceBetween={40}
+    slidesPerView={1}
+    breakpoints={{
+        640: { slidesPerView: 2 },
+        1024: { slidesPerView: 3 },
+    }}
+  
+    
+    className="pb-20 article-swiper" 
+>
+    {blogs.slice(0, 4).map((blog) => (
+        <SwiperSlide key={blog._id}>
+            <div className="h-full py-2"> 
+                <ArticleCard blog={blog} />
+            </div>
+        </SwiperSlide>
+    ))}
+</Swiper>
+      </div>
+    </section>
+  );
+};
+
+export default Articles;
