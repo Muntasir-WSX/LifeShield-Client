@@ -1,13 +1,17 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import LifeShieldLogo from "../LifeShieldLogo/LifeShieldLogo";
-import { FaFacebook, FaInstagram, FaLinkedinIn, FaTwitter } from "react-icons/fa";
+import {
+  FaFacebook,
+  FaInstagram,
+  FaLinkedinIn,
+  FaTwitter,
+} from "react-icons/fa";
 
 const Footer = () => {
   return (
     <footer className="bg-[#00332c] text-white pt-16 pb-8 px-4 md:px-12">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
-        {/* Column 1: Logo & About */}
         <div className="space-y-6">
           <div className="bg-white p-2 inline-block rounded-md">
             <LifeShieldLogo />
@@ -52,8 +56,6 @@ const Footer = () => {
             </a>
           </div>
         </div>
-
-        {/* Column 2: Quick Links (Doc Routes) */}
         <div>
           <h3 className="text-xl font-bold mb-6 border-l-4 border-green-500 pl-3">
             Quick Links
@@ -98,8 +100,6 @@ const Footer = () => {
             </li>
           </ul>
         </div>
-
-        {/* Column 3: Our Services (Professional Touch) */}
         <div>
           <h3 className="text-xl font-bold mb-6 border-l-4 border-green-500 pl-3">
             Our Services
@@ -122,8 +122,6 @@ const Footer = () => {
             </li>
           </ul>
         </div>
-
-        {/* Column 4: Contact Info */}
         <div>
           <h3 className="text-xl font-bold mb-6 border-l-4 border-green-500 pl-3">
             Get In Touch
@@ -152,8 +150,6 @@ const Footer = () => {
           </div>
         </div>
       </div>
-
-      {/* Bottom Bar */}
       <div className="mt-16 pt-8 border-t border-gray-700 max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-400">
         <p>© 2026 Life Shield. Designed By Muntasir-WSX.</p>
         <div className="flex gap-6">
