@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FaArrowRight, FaCalendarAlt } from 'react-icons/fa';
+import { FaArrowRight } from 'react-icons/fa';
 
 const ArticleCard = ({ blog }) => {
     if (!blog) return null;

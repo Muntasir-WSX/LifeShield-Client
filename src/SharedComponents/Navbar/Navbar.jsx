@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, NavLink } from 'react-router-dom'; // react-router-dom ব্যবহার করা ভালো
+import { Link, NavLink } from 'react-router-dom'; 
 import LifeShieldLogo from '../LifeShieldLogo/LifeShieldLogo';
 
 const Navbar = () => {
@@ -59,7 +59,7 @@ const Navbar = () => {
                     </div>
                 </div>
 
-                {/* Logo for mobile only (centered if needed, or keep at start) */}
+                {/* Logo for mobile  */}
                 <div className="navbar-center lg:hidden">
                     <LifeShieldLogo />
                 </div>

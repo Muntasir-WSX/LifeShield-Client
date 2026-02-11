@@ -15,13 +15,13 @@ const Articles = () => {
   const { data: blogs = [], isLoading } = useQuery({
     queryKey: ["latestBlogs"],
     queryFn: async () => {
-      const res = await axiosPublic.get("/latest-blogs");
+      const res = await axiosPublic.get("/all-blogs");
       return res.data;
     },
   });
 
   if (isLoading)
-    return <div className="text-center py-20">Loading Insights...</div>;
+    return <div className="text-center py-20 text-green-600 font-bold">Loading Insights...</div>;
 
   return (
     <section className="py-20 bg-white">
@@ -35,35 +35,34 @@ const Articles = () => {
               Expert advice and latest news for your security
             </p>
           </div>
-          {/* All Blogs Link */}
           <Link
-            to="/blog-details"
+            to="/blogs"
             className="hidden md:flex items-center gap-2 text-green-600 font-bold hover:gap-4 transition-all"
           >
             Explore All Blogs <FaArrowRight />
           </Link>
         </div>
 
-<Swiper
-    modules={[Pagination, Autoplay]}
-    spaceBetween={40}
-    slidesPerView={1}
-    breakpoints={{
-        640: { slidesPerView: 2 },
-        1024: { slidesPerView: 3 },
-    }}
-  
-    
-    className="pb-20 article-swiper" 
->
-    {blogs.slice(0, 4).map((blog) => (
-        <SwiperSlide key={blog._id}>
-            <div className="h-full py-2"> 
+        <Swiper
+          modules={[Pagination, Autoplay]}
+          spaceBetween={40}
+          slidesPerView={1}
+          breakpoints={{
+            640: { slidesPerView: 2 },
+            1024: { slidesPerView: 3 },
+          }}
+          
+          autoplay={{ delay: 3000, disableOnInteraction: false }} 
+          className="pb-20 article-swiper"
+        >
+          {blogs.map((blog) => (
+            <SwiperSlide key={blog._id}>
+              <div className="h-full py-2">
                 <ArticleCard blog={blog} />
-            </div>
-        </SwiperSlide>
-    ))}
-</Swiper>
+              </div>
+            </SwiperSlide>
+          ))}
+        </Swiper>
       </div>
     </section>
   );
