@@ -4,6 +4,7 @@ import Agents from "./Agent/Agents"
 import Articles from './Article/Articles';
 import PopularPolicies from './PopularPolicies/PopularPolicies';
 import Testimonials from './Testimonials/Testimonials';
+import Newsletter from './Newsletter/Newsletter';
 
 const Home = () => {
     return (
@@ -19,6 +20,7 @@ const Home = () => {
              {/* Customer Reviews Section */}
              <Testimonials></Testimonials>
              {/* Newsletter Subscription  */}
+             <Newsletter></Newsletter>
         </div>
     );
 };
