@@ -2,9 +2,12 @@ import React from "react";
 import { Link } from "react-router-dom";
 import LifeShieldLogo from "../LifeShieldLogo/LifeShieldLogo";
 import {
+  FaEnvelope,
   FaFacebook,
   FaInstagram,
   FaLinkedinIn,
+  FaMapMarkerAlt,
+  FaPhoneAlt,
   FaTwitter,
 } from "react-icons/fa";
 
@@ -122,32 +125,38 @@ const Footer = () => {
             </li>
           </ul>
         </div>
-        <div>
-          <h3 className="text-xl font-bold mb-6 border-l-4 border-green-500 pl-3">
-            Get In Touch
-          </h3>
-          <div className="space-y-5">
-            <div className="flex items-start gap-4">
-              <div className="p-2 bg-[#0a4d44] rounded-md text-green-400">
-                <i className="fas fa-map-marker-alt"></i>
-              </div>
-              <p className="text-gray-300 text-sm">
-                374 Khawaja K Road, B Hat 1371, CTG
-              </p>
+        <div className="text-white"> 
+            <h3 className="text-xl font-bold mb-6 border-l-4 border-green-500 pl-3 uppercase tracking-wider text-white">
+                Get In Touch
+            </h3>
+            
+            <div className="space-y-5">
+                {/* Address */}
+                <div className="flex items-start gap-4 group">
+                    <div className="p-2.5 bg-[#0a4d44] rounded-lg text-green-400 group-hover:bg-green-500 group-hover:text-white transition-all duration-300">
+                        <FaMapMarkerAlt size={16} />
+                    </div>
+                    <p className="text-gray-300 text-sm leading-relaxed">
+                        374 Khawaja K Road, <br /> B Hat 1371, Chattogram
+                    </p>
+                </div>
+
+                {/* Phone */}
+                <div className="flex items-center gap-4 group">
+                    <div className="p-2.5 bg-[#0a4d44] rounded-lg text-green-400 group-hover:bg-green-500 group-hover:text-white transition-all duration-300">
+                        <FaPhoneAlt size={16} />
+                    </div>
+                    <p className="text-gray-300 text-sm font-medium">(+880) 1960-551472</p>
+                </div>
+
+                {/* Email */}
+                <div className="flex items-center gap-4 group">
+                    <div className="p-2.5 bg-[#0a4d44] rounded-lg text-green-400 group-hover:bg-green-500 group-hover:text-white transition-all duration-300">
+                        <FaEnvelope size={16} />
+                    </div>
+                    <p className="text-gray-300 text-sm break-all">alimuntasir2001@gmail.com</p>
+                </div>
             </div>
-            <div className="flex items-center gap-4">
-              <div className="p-2 bg-[#0a4d44] rounded-md text-green-400">
-                <i className="fas fa-phone-alt"></i>
-              </div>
-              <p className="text-gray-300 text-sm">(+880) 1960-551472</p>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="p-2 bg-[#0a4d44] rounded-md text-green-400">
-                <i className="fas fa-envelope"></i>
-              </div>
-              <p className="text-gray-300 text-sm">alimuntasir2001@gmail.com</p>
-            </div>
-          </div>
         </div>
       </div>
       <div className="mt-16 pt-8 border-t border-gray-700 max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-400">
