@@ -1,10 +1,15 @@
 import React from 'react';
+import { AuthContext } from './AuthContext';
 
-const AuthProvider = () => {
+const AuthProvider = ({children}) => {
+
+    const authInfo = {
+
+    }
     return (
-        <div>
-            
-        </div>
+        <AuthContext value={authInfo}>
+            {children}
+        </AuthContext>
     );
 };
 
