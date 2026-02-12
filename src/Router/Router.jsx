@@ -4,6 +4,8 @@ import MainLayouts from '../Layouts/MainLayouts';
 import Home from '../Pages/Home/Home';
 import ArticleDetails from '../Pages/Home/Article/ArticleDetails';
 import Blogs from '../Pages/Blogs/Blogs';
+import SignIn from '../Pages/AuthPages/SignIn/SignIn';
+import Register from '../Pages/AuthPages/Register/Register';
 
 const Router = createBrowserRouter([
   {
@@ -26,8 +28,21 @@ const Router = createBrowserRouter([
           path: 'blog-details/:id',
           element: <ArticleDetails></ArticleDetails>
       },
+     
     ],
+
+    
   },
+  // auth routes
+
+   {
+        path: "SignIn",
+    element: <SignIn></SignIn>
+      },
+      {
+        path:"register",
+        element: <Register></Register>
+      }
 ]);
 
 export default Router;
