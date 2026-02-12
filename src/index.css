@@ -21,3 +21,17 @@
     background: #16a34a !important; 
     opacity: 1;
 }
+
+#my-drawer:checked ~ .drawer-content label span:nth-child(1) {
+    transform: rotate(225deg);
+    background-color: #ef4444; 
+}
+
+#my-drawer:checked ~ .drawer-content label span:nth-child(2) {
+    transform: rotate(225deg);
+    background-color: #ef4444;
+}
+
+label:hover span {
+    background-color: #16a34a; 
+}
