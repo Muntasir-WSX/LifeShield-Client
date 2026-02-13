@@ -16,6 +16,8 @@ const Register = () => {
   const navigate = useNavigate();
   const axiosPublic = useAxiosPublic();
   const [loading, setLoading] = useState(false);
+  const image_hosting_key = import.meta.env.VITE_Image_Upload_Key;
+  const image_hosting_api = `https://api.imgbb.com/1/upload?key=${image_hosting_key}`;
 
   const saveUserToDbAndToken = async (user, name, photoURL) => {
     const userInfo = {
@@ -36,40 +38,41 @@ const Register = () => {
 
   const onSubmit = async (data) => {
     const { name, email, password } = data;
-
-    // পাসওয়ার্ড ভ্যালিডেশন (SweetAlert এর বদলে Toast)
     if (!/(?=.*[a-z])(?=.*[A-Z]).{6,}/.test(password)) {
       return toast.error("Password must be 6+ chars with Uppercase & Lowercase");
     }
 
     setLoading(true);
-    const loadingToast = toast.loading("Creating account..."); 
+    const loadingToast = toast.loading("Creating account...");
 
     try {
       let photoURL = "";
       if (data.photo && data.photo[0]) {
-        const formData = new FormData();
-        formData.append("image", data.photo[0]);
-        const imageUploadUrl = `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_Image_Upload_Key}`;
-        const res = await axios.post(imageUploadUrl, formData);
+        const imageFile = { image: data.photo[0] };
+        const res = await axios.post(image_hosting_api, imageFile, {
+          headers: {
+            'content-type': 'multipart/form-data'
+          }
+        });
+
         if (res.data.success) {
           photoURL = res.data.data.display_url;
         }
       }
-
       const result = await createUser(email, password);
       await updateUserProfile(name, photoURL);
       const dbRes = await saveUserToDbAndToken(result.user, name, photoURL);
 
       if (dbRes.data.insertedId || dbRes.data.message === 'User already exists') {
-        toast.dismiss(loadingToast); 
-        toast.success("Account Created Successfully!"); 
+        toast.dismiss(loadingToast);
+        toast.success("Account Created Successfully!");
         reset();
         navigate("/");
       }
     } catch (error) {
       toast.dismiss(loadingToast);
-      toast.error(error.message);
+      console.error("Registration Error:", error);
+      toast.error(error.message || "Registration failed. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -85,6 +88,7 @@ const Register = () => {
       toast.error(error.message);
     }
   };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#f0f4f3] p-4 md:p-10">
       <motion.div
@@ -115,11 +119,13 @@ const Register = () => {
             <div className="relative">
               <FaUser className="absolute left-4 top-1/2 -translate-y-1/2 text-green-400" />
               <input {...register("name", { required: true })} type="text" placeholder="Full Name" className="w-full pl-12 pr-4 py-4 rounded-2xl bg-white/10 border border-white/10 focus:border-green-400 focus:bg-white/20 outline-none transition-all placeholder:text-gray-400" />
+              {errors.name && <span className="text-red-400 text-xs mt-1">Name is required</span>}
             </div>
 
             <div className="relative">
               <FaEnvelope className="absolute left-4 top-1/2 -translate-y-1/2 text-green-400" />
               <input {...register("email", { required: true })} type="email" placeholder="Email Address" className="w-full pl-12 pr-4 py-4 rounded-2xl bg-white/10 border border-white/10 focus:border-green-400 focus:bg-white/20 outline-none transition-all placeholder:text-gray-400" />
+              {errors.email && <span className="text-red-400 text-xs mt-1">Email is required</span>}
             </div>
 
             <div className="relative">
@@ -128,11 +134,13 @@ const Register = () => {
                 <FaImage className="absolute left-4 top-1/2 -translate-y-1/2 text-green-400 z-10" />
                 <input {...register("photo", { required: true })} type="file" accept="image/*" className="w-full pl-12 pr-4 py-3 rounded-2xl bg-white/10 border border-white/10 focus:border-green-400 focus:bg-white/20 outline-none transition-all text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-500 file:text-[#00332c] hover:file:bg-green-400 cursor-pointer" />
               </div>
+              {errors.photo && <span className="text-red-400 text-xs mt-1">Photo is required</span>}
             </div>
 
             <div className="relative">
               <FaLock className="absolute left-4 top-1/2 -translate-y-1/2 text-green-400" />
               <input {...register("password", { required: true })} type="password" placeholder="Password" className="w-full pl-12 pr-4 py-4 rounded-2xl bg-white/10 border border-white/10 focus:border-green-400 focus:bg-white/20 outline-none transition-all placeholder:text-gray-400" />
+              {errors.password && <span className="text-red-400 text-xs mt-1">Password is required</span>}
             </div>
 
             <motion.button

@@ -5,7 +5,7 @@ import useAxiosPublic from "../../../Hooks/UseAxiosPublic";
 import LifeShieldLogo from "../../../SharedComponents/LifeShieldLogo/LifeShieldLogo";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion";
-import { Link, useLocation, useNavigate } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router-dom"; 
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
@@ -18,62 +18,55 @@ const SignIn = () => {
   const [loading, setLoading] = useState(false);
 
   const from = location.state?.from?.pathname || "/";
-
   const handleAuthLogic = async (email) => {
     try {
       const res = await axiosPublic.post("/jwt", { email });
       if (res.data.token) {
         localStorage.setItem("access-token", res.data.token);
         
-        const roleRes = await axiosPublic.get(`/users/role/${email}`);
-        const role = roleRes.data?.role;
-
-        if (role === "admin") {
-          navigate("/dashboard/admin-home");
-        } else {
-          navigate(from, { replace: true });
-        }
+        navigate(from, { replace: true });
       }
     } catch (err) {
-      console.error("Auth Error:", err);
-      toast.error("Failed to sync session!");
+      console.error("JWT Error:", err);
+      toast.error("Session failed!");
     }
   };
 
   const onSubmit = (data) => {
-  setLoading(true);
-  signIn(data.email, data.password)
-    .then((result) => {
-      toast.success("Welcome Back!");
-      handleAuthLogic(result.user.email);
-    })
-    .catch((error) => {
-      setLoading(false);
-      console.dir(error); // এখানে error এর ভেতর 'code' টা দেখুন (যেমন: auth/user-not-found)
-      toast.error(error.message); 
-    });
-};
+    setLoading(true);
+    signIn(data.email.trim(), data.password)
+      .then((result) => {
+        toast.success("Welcome Back!");
+        handleAuthLogic(result.user.email);
+      })
+      .catch((error) => {
+        setLoading(false);
+        
+        if (error.code === 'auth/invalid-credential') {
+          toast.error("Invalid email or password.");
+        } else {
+          toast.error("Login failed. Check credentials.");
+        }
+      });
+  };
 
   const handleGoogleSignIn = () => {
     googleSignIn()
       .then((result) => {
-        const user = result.user;
         const userInfo = {
-          name: user?.displayName,
-          email: user?.email,
-          image: user?.photoURL,
+          name: result.user?.displayName,
+          email: result.user?.email,
+          image: result.user?.photoURL,
           role: "customer",
           createdAt: new Date().toISOString(),
         };
 
         axiosPublic.post("/users", userInfo).then(() => {
-          toast.success("Google Login Successful"); // Hot Toast
-          handleAuthLogic(user.email);
+          toast.success("Google Login Successful");
+          handleAuthLogic(result.user.email);
         });
       })
-      .catch((error) => {
-        toast.error(error.message); // Hot Toast
-      });
+      .catch((error) => toast.error(error.message));
   };
 
   return (
