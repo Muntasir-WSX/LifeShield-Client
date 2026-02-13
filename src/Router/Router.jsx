@@ -10,6 +10,7 @@ import PrivateRoutes from '../Routes/PrivateRoutes';
 import AllPolicies from '../Pages/AllPolicies/AllPolicies';
 import AllPoliciesDetails from '../Pages/AllPolicies/AllPoliciesDetails';
 import QuotePage from '../Pages/QuotePage/QuotePage';
+import QuoteApplicationFrom from '../Pages/QuotePage/QuoteApplicationForm';
 
 const Router = createBrowserRouter([
   {
@@ -39,6 +40,11 @@ const Router = createBrowserRouter([
 {
   path: "quote/:id", 
   element: <QuotePage />
+
+},
+{
+    path: 'apply',
+    element: <PrivateRoutes><QuoteApplicationFrom></QuoteApplicationFrom></PrivateRoutes>
 },
       {
           path: 'blog-details/:id',

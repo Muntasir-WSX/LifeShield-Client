@@ -1,102 +1,190 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import useAxiosPublic from '../../Hooks/UseAxiosPublic';
+import { FaCalculator, FaInfoCircle } from 'react-icons/fa';
 
 const QuotePage = () => {
-    const { id } = useParams(); // যদি পলিসি ডিটেইলস থেকে আসে
+    const { id } = useParams();
     const axiosPublic = useAxiosPublic();
     
-    // Form States
     const [selectedPolicy, setSelectedPolicy] = useState(null);
     const [age, setAge] = useState(25);
     const [gender, setGender] = useState('male');
     const [isSmoker, setIsSmoker] = useState(false);
-    const [coverage, setCoverage] = useState(500000);
+    const [coverage, setCoverage] = useState(1000000); // Default 10 Lakh
     const [premium, setPremium] = useState(0);
-    const { data: allPolicies = [] } = useQuery({
+
+    const { data: allPolicies = [], isLoading } = useQuery({
         queryKey: ['all-policies-list'],
         queryFn: async () => {
             const res = await axiosPublic.get('/all-policies');
             return res.data.result;
         }
     });
+
     useEffect(() => {
-        if (id) {
+        if (id && allPolicies.length > 0) {
             const found = allPolicies.find(p => p._id === id);
             if (found) setSelectedPolicy(found);
         }
     }, [id, allPolicies]);
+
     useEffect(() => {
         if (!selectedPolicy) return;
 
-        let basePrice = coverage * (selectedPolicy.base_rate / 100);
+        // --- Professional Calculation Logic ---
+        let baseRate = selectedPolicy.base_rate || 0.5; // Default 0.5% if not found
+        let basePrice = (coverage * baseRate) / 100;
       
-        const ageFactor = 1 + (age - 18) * 0.02; 
-      
-        const genderFactor = gender === 'female' ? 0.95 : 1.0;
+        // Age Factor: ১৮ বছরের পর প্রতি বছর ২% ঝুঁকি বৃদ্ধি
+        const ageFactor = 1 + (Math.max(0, age - 18) * 0.025); 
+        const genderFactor = gender === 'female' ? 0.90 : 1.0; // নারীদের জন্য ১০% ছাড়
+        const smokerFactor = isSmoker ? 1.35 : 1.0; // ধূমপায়ীদের জন্য ৩৫% ঝুঁকি বেশি
+
+        const yearlyPremium = basePrice * ageFactor * genderFactor * smokerFactor;
+        const monthlyPremium = yearlyPremium / 12;
         
-        const smokerFactor = isSmoker ? 1.20 : 1.0;
-
-        const totalPremium = (basePrice * ageFactor * genderFactor * smokerFactor) / 12;
-        setPremium(Math.round(totalPremium));
-
+        setPremium(Math.round(monthlyPremium));
     }, [age, gender, isSmoker, coverage, selectedPolicy]);
 
+    if (isLoading) return <div className="h-screen flex justify-center items-center"><span className="loading loading-bars loading-lg text-green-600"></span></div>;
+
     return (
-        <div className="min-h-screen bg-gray-50 py-20 px-4">
-            <div className="max-w-4xl mx-auto bg-white rounded-[3rem] shadow-2xl overflow-hidden flex flex-col md:flex-row">
+        <div className="min-h-screen bg-[#f8fafc] py-12 px-4">
+            <div className="max-w-5xl mx-auto bg-white rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col lg:flex-row border border-gray-100">
                 
-                {/* Form Section */}
-                <div className="p-10 md:w-3/5 space-y-6">
-                    <h2 className="text-3xl font-black text-[#00332c]">Get Your Free Quote</h2>
-                    
-                    <div>
-                        <label className="label font-bold">Select Policy</label>
-                        <select 
-                            className="select select-bordered w-full"
-                            value={selectedPolicy?._id || ""}
-                            onChange={(e) => setSelectedPolicy(allPolicies.find(p => p._id === e.target.value))}
-                        >
-                            <option disabled value="">Pick a policy</option>
-                            {allPolicies.map(p => <option key={p._id} value={p._id}>{p.title}</option>)}
-                        </select>
+                {/* --- Left Side: Form --- */}
+                <div className="p-8 lg:p-12 lg:w-3/5 space-y-8">
+                    <div className="flex items-center gap-3">
+                        <div className="p-3 bg-green-100 text-green-700 rounded-2xl"><FaCalculator size={24}/></div>
+                        <div>
+                            <h2 className="text-3xl font-black text-[#00332c]">Premium Calculator</h2>
+                            <p className="text-gray-500 text-sm">Adjust parameters to see real-time pricing</p>
+                        </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                        <div>
-                            <label className="label font-bold">Your Age: {age}</label>
-                            <input type="range" min="18" max="70" value={age} onChange={(e)=>setAge(e.target.value)} className="range range-success" />
-                        </div>
-                        <div>
-                            <label className="label font-bold">Gender</label>
-                            <select className="select select-bordered w-full" onChange={(e)=>setGender(e.target.value)}>
-                                <option value="male">Male</option>
-                                <option value="female">Female</option>
+                    <div className="space-y-6">
+                        {/* Policy Selection */}
+                        <div className="form-control">
+                            <label className="label font-bold text-gray-700">Select Life Insurance Plan</label>
+                            <select 
+                                className="select select-bordered w-full bg-gray-50 focus:outline-green-500 border-gray-200"
+                                value={selectedPolicy?._id || ""}
+                                onChange={(e) => setSelectedPolicy(allPolicies.find(p => p._id === e.target.value))}
+                            >
+                                <option value="" disabled>Choose a plan...</option>
+                                {allPolicies.map(p => <option key={p._id} value={p._id}>{p.title}</option>)}
                             </select>
                         </div>
-                    </div>
 
-                    <div>
-                        <label className="label font-bold">Coverage Amount (BDT): {coverage.toLocaleString()}</label>
-                        <input type="range" min="100000" max="5000000" step="50000" value={coverage} onChange={(e)=>setCoverage(e.target.value)} className="range range-info" />
-                    </div>
+                        {/* Age & Gender Row */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="form-control">
+                                <div className="flex justify-between items-center mb-2">
+                                    <label className="font-bold text-gray-700">Age: <span className="text-green-600">{age} yrs</span></label>
+                                    <input 
+                                        type="number" 
+                                        min="18" max="70" 
+                                        value={age}
+                                        onChange={(e) => setAge(e.target.value)}
+                                        className="w-16 border rounded text-center text-sm p-1 focus:ring-1 ring-green-500"
+                                    />
+                                </div>
+                                <input type="range" min="18" max="70" value={age} onChange={(e)=>setAge(e.target.value)} className="range range-success range-sm" />
+                            </div>
+                            <div className="form-control">
+                                <label className="label font-bold text-gray-700">Gender</label>
+                                <div className="join w-full">
+                                    <button onClick={() => setGender('male')} className={`join-item btn btn-sm flex-1 ${gender === 'male' ? 'btn-success text-white' : 'btn-ghost border-gray-200'}`}>Male</button>
+                                    <button onClick={() => setGender('female')} className={`join-item btn btn-sm flex-1 ${gender === 'female' ? 'btn-success text-white' : 'btn-ghost border-gray-200'}`}>Female</button>
+                                </div>
+                            </div>
+                        </div>
 
-                    <div className="flex items-center gap-3 p-4 bg-orange-50 rounded-2xl border border-orange-100">
-                        <input type="checkbox" className="checkbox checkbox-warning" onChange={(e)=>setIsSmoker(e.target.checked)} />
-                        <span className="text-sm font-bold text-orange-800">I am a smoker (Higher Risk)</span>
+                        {/* Coverage Section */}
+                        <div className="form-control">
+                            <div className="flex justify-between items-center mb-2">
+                                <label className="font-bold text-gray-700 text-lg">Coverage: <span className="text-blue-600">৳{coverage.toLocaleString('en-BD')}</span></label>
+                                <span className="text-xs badge badge-ghost font-mono uppercase tracking-tighter">Max: 50L</span>
+                            </div>
+                            <input 
+                                type="range" 
+                                min="100000" 
+                                max="5000000" 
+                                step="50000" 
+                                value={coverage} 
+                                onChange={(e)=>setCoverage(Number(e.target.value))} 
+                                className="range range-info range-sm" 
+                            />
+                            <div className="w-full flex justify-between text-xs px-2 mt-2 font-medium text-gray-400">
+                                <span>1 Lakh</span>
+                                <span>25 Lakh</span>
+                                <span>50 Lakh</span>
+                            </div>
+                        </div>
+
+                        {/* Risk Factor */}
+                        <div className={`flex items-center justify-between p-4 rounded-2xl border transition-all ${isSmoker ? 'bg-red-50 border-red-200' : 'bg-green-50 border-green-200'}`}>
+                            <div className="flex items-center gap-3">
+                                <input 
+                                    type="checkbox" 
+                                    checked={isSmoker}
+                                    className="checkbox checkbox-error" 
+                                    onChange={(e)=>setIsSmoker(e.target.checked)} 
+                                />
+                                <div>
+                                    <p className={`font-bold ${isSmoker ? 'text-red-700' : 'text-green-700'}`}>Smoker / Tobacco User</p>
+                                    <p className="text-[10px] text-gray-500 uppercase">Increased health risk impact premium</p>
+                                </div>
+                            </div>
+                            {isSmoker && <span className="badge badge-error text-white font-bold">+35% Risk</span>}
+                        </div>
                     </div>
                 </div>
 
-                {/* Result Section */}
-                <div className="md:w-2/5 bg-[#00332c] p-10 text-white flex flex-col justify-center items-center text-center">
-                    <p className="uppercase tracking-widest text-sm mb-4 text-green-400 font-bold">Estimated Premium</p>
-                    <h3 className="text-6xl font-black mb-2">৳{premium}</h3>
-                    <p className="text-gray-400">Per Month</p>
+                {/* --- Right Side: Result Summary --- */}
+                <div className="lg:w-2/5 bg-[#00332c] p-10 lg:p-12 text-white flex flex-col justify-center relative overflow-hidden">
+                    {/* Background Decorative Element */}
+                    <div className="absolute top-[-20%] right-[-10%] w-64 h-64 bg-green-500/10 rounded-full blur-3xl"></div>
                     
-                    <div className="mt-10 w-full space-y-4">
-                        <button className="btn btn-success w-full rounded-xl">Apply for Policy</button>
-                        <p className="text-[10px] text-gray-500 italic">*Calculated based on standard health conditions.</p>
+                    <div className="relative z-10 text-center">
+                        <p className="uppercase tracking-[0.2em] text-xs mb-4 text-green-400 font-bold">Estimated Monthly Investment</p>
+                        <div className="flex items-baseline justify-center gap-1">
+                            <span className="text-3xl font-light text-green-500">৳</span>
+                            <h3 className="text-7xl font-black">{premium.toLocaleString('en-BD')}</h3>
+                        </div>
+                        <p className="text-gray-400 mt-2">inclusive of all taxes</p>
+
+                        <div className="mt-12 space-y-6">
+                            <div className="bg-white/5 p-5 rounded-2xl backdrop-blur-sm border border-white/10 text-left space-y-3">
+                                <div className="flex justify-between text-sm">
+                                    <span className="text-gray-400">Policy Name:</span>
+                                    <span className="font-bold text-green-400 truncate ml-4">{selectedPolicy?.title || "Not Selected"}</span>
+                                </div>
+                                <div className="flex justify-between text-sm">
+                                    <span className="text-gray-400">Total Coverage:</span>
+                                    <span className="font-bold underline decoration-green-500">৳{coverage.toLocaleString('en-BD')}</span>
+                                </div>
+                                <div className="flex justify-between text-sm">
+                                    <span className="text-gray-400">Insured Person:</span>
+                                    <span className="font-bold capitalize">{gender}, {age} Years</span>
+                                </div>
+                            </div>
+
+                            <Link 
+                                to="/apply" 
+                                state={{ premium, coverage, policyTitle: selectedPolicy?.title, policyId: selectedPolicy?._id }}
+                                className={`btn btn-success btn-lg w-full rounded-2xl shadow-xl shadow-green-900/20 text-white font-black text-lg ${!selectedPolicy && 'btn-disabled'}`}
+                            >
+                                Apply for Policy
+                            </Link>
+
+                            <div className="flex items-center gap-2 justify-center text-[10px] text-gray-500">
+                                <FaInfoCircle />
+                                <span>Subject to medical reports & underwriters approval.</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
