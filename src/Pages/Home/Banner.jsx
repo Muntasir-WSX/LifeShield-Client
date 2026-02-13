@@ -37,7 +37,7 @@ const Banner = () => {
     useEffect(() => {
         const timer = setInterval(() => {
             setCurrent((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
-        }, 6000); // প্রতি ৬ সেকেন্ড পর স্লাইড পরিবর্তন হবে
+        }, 6000); 
         return () => clearInterval(timer);
     }, []);
 
@@ -89,36 +89,18 @@ const Banner = () => {
                                 className="flex flex-wrap gap-4"
                             >
                                 {/* Main Redirect Button */}
-                                <Link to="/all-policies">
+                                <Link to="/quote">
                                     <button className="group relative bg-green-500 hover:bg-green-600 text-[#00332c] px-8 md:px-10 py-4 rounded-full text-lg font-black uppercase tracking-widest transition-all shadow-2xl flex items-center gap-3">
                                         Get a Free Quote
                                         <FaArrowRight className="group-hover:translate-x-2 transition-transform" />
                                     </button>
                                 </Link>
-
-                                <button className="px-8 md:px-10 py-4 rounded-full text-lg font-bold border-2 border-white/30 hover:bg-white/10 transition-all">
-                                    Learn More
-                                </button>
                             </motion.div>
                         </div>
                     </div>
                 </motion.div>
             </AnimatePresence>
 
-            {/* Custom Indicators (Bottom Left Style) */}
-            <div className="absolute bottom-12 left-6 md:left-20 flex items-center gap-4">
-                <span className="text-white font-black text-xl">0{current + 1}</span>
-                <div className="flex gap-2">
-                    {slides.map((_, index) => (
-                        <div 
-                            key={index}
-                            onClick={() => setCurrent(index)}
-                            className={`h-1.5 transition-all duration-500 rounded-full cursor-pointer ${current === index ? 'w-12 bg-green-500' : 'w-4 bg-white/30'}`}
-                        ></div>
-                    ))}
-                </div>
-                <span className="text-white/50 font-bold text-sm">0{slides.length}</span>
-            </div>
         </div>
     );
 };

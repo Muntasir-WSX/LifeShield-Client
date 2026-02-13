@@ -9,6 +9,7 @@ import Register from '../Pages/AuthPages/Register/Register';
 import PrivateRoutes from '../Routes/PrivateRoutes';
 import AllPolicies from '../Pages/AllPolicies/AllPolicies';
 import AllPoliciesDetails from '../Pages/AllPolicies/AllPoliciesDetails';
+import QuotePage from '../Pages/QuotePage/QuotePage';
 
 const Router = createBrowserRouter([
   {
@@ -31,6 +32,14 @@ const Router = createBrowserRouter([
         path: "blogs",
         element: <Blogs></Blogs>
       },
+      {
+  path: "quote", 
+  element: <QuotePage />
+},
+{
+  path: "quote/:id", 
+  element: <QuotePage />
+},
       {
           path: 'blog-details/:id',
           element: <ArticleDetails></ArticleDetails>

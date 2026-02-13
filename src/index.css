@@ -26,7 +26,6 @@
     transform: rotate(225deg);
     background-color: #ef4444; 
 }
-
 #my-drawer:checked ~ .drawer-content label span:nth-child(2) {
     transform: rotate(225deg);
     background-color: #ef4444;
