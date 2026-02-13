@@ -3,7 +3,7 @@ import { Link, NavLink } from "react-router-dom";
 import LifeShieldLogo from "../LifeShieldLogo/LifeShieldLogo";
 import toast from "react-hot-toast";
 import useAuth from "../../Hooks/useAuth";
-import { FaHome } from "react-icons/fa"; 
+import { FaHome, FaUserCircle, FaSignOutAlt } from "react-icons/fa"; // নতুন আইকন যোগ করা হয়েছে
 
 const Navbar = () => {
   const { user, logOut } = useAuth();
@@ -22,6 +22,7 @@ const Navbar = () => {
 
   const navLinks = (
     <>
+        
       <li>
         <NavLink to="/" onClick={closeDrawer} className={({ isActive }) => isActive ? "text-green-500 font-bold" : "hover:text-green-500 transition-colors"}> Home </NavLink>
       </li>
@@ -65,7 +66,6 @@ const Navbar = () => {
               <label htmlFor="my-drawer" className="drawer-overlay"></label>
               <div className="menu p-6 w-80 min-h-full bg-white text-base-content flex flex-col justify-between">
                 <div>
-                    {/* লোগো সেকশন - ক্রস থেকে দূরে রাখার জন্য মার্জিন টপ বাড়িয়েছি */}
                     <div className="mb-10 mt-12 border-b pb-4">
                         <LifeShieldLogo />
                     </div>
@@ -75,7 +75,6 @@ const Navbar = () => {
                     </ul>
                 </div>
 
-                {/* --- নিচে নতুন Back to Home রুট --- */}
                 <div className="mt-auto border-t pt-4">
                     <Link 
                         to="/" 
@@ -105,17 +104,28 @@ const Navbar = () => {
           </ul>
         </div>
 
-        <div className="navbar-end gap-2 md:gap-4">
+        {/* --- Navbar End: Profile Dropdown added --- */}
+        <div className="navbar-end gap-2">
           {user ? (
-            <div className="flex items-center gap-3">
-              <div className="avatar online cursor-pointer hidden sm:block" title={user?.email}>
+            <div className="dropdown dropdown-end">
+              <div tabIndex={0} role="button" className="avatar online cursor-pointer" title={user?.displayName || "Profile"}>
                 <div className="w-10 rounded-full border-2 border-green-500">
                   <img src={user?.photoURL || "https://i.ibb.co.com/8mX1C9T/user.png"} alt="User" />
                 </div>
               </div>
-              <button onClick={handleLogOut} className="btn btn-sm btn-ghost text-red-600 border border-red-200 font-bold px-4">
-                Logout
-              </button>
+              <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow-xl bg-white rounded-box w-56 mt-4 border border-gray-100 font-bold text-[#00332c]">
+                <li className="px-4 py-2 text-xs text-gray-400 uppercase border-b mb-2">My Account</li>
+                <li>
+                    <Link to="/profile" className="flex items-center gap-2 hover:text-green-600">
+                        <FaUserCircle className="text-lg" /> View Profile
+                    </Link>
+                </li>
+                <li>
+                    <button onClick={handleLogOut} className="flex items-center gap-2 text-red-600 hover:bg-red-50">
+                        <FaSignOutAlt className="text-lg" /> Logout
+                    </button>
+                </li>
+              </ul>
             </div>
           ) : (
             <Link to="/signIn" className="btn btn-sm md:btn-md btn-outline border-[#00332c] text-[#00332c] px-6 rounded-md font-bold uppercase">
