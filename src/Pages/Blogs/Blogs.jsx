@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { FaCalendarAlt, FaArrowRight, FaUser } from 'react-icons/fa';
 import useAxiosPublic from '../../Hooks/UseAxiosPublic';
+import Loading from '../../SharedComponents/Loading/Loading';
 
 const Blogs = () => {
     const axiosPublic = useAxiosPublic();
@@ -17,9 +18,7 @@ const Blogs = () => {
 
     if (isLoading) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
-                <span className="loading loading-dots loading-lg text-green-600"></span>
-            </div>
+            <Loading></Loading>
         );
     }
 

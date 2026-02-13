@@ -156,7 +156,7 @@ const Navbar = () => {
         <div className="navbar-end gap-4">
           {/* Login Button with Fixed Hover */}
           <Link
-            to="/SignIn"
+            to="/signIn"
             className="btn btn-sm md:btn-md btn-outline border-[#00332c] text-[#00332c] hover:bg-[#00332c] hover:text-white hover:border-[#00332c] px-4 md:px-8 rounded-md transition-all duration-300 text-xs md:text-sm font-semibold"
           >
             Login

@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { FaCalendarAlt, FaUserEdit, FaChevronLeft } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import useAxiosPublic from '../../../Hooks/UseAxiosPublic';
+import Loading from '../../../SharedComponents/Loading/Loading';
 
 const ArticleDetails = () => {
     const { id } = useParams();
@@ -17,7 +18,7 @@ const ArticleDetails = () => {
         }
     });
 
-    if (isLoading) return <div className="min-h-screen flex items-center justify-center">Loading Article...</div>;
+    if (isLoading) return <Loading></Loading>
 
     return (
         <div className="min-h-screen bg-gray-50 pb-20 pt-10">

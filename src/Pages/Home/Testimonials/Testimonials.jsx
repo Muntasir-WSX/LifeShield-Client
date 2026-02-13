@@ -8,6 +8,7 @@ import useAxiosPublic from '../../../Hooks/UseAxiosPublic';
 // Swiper Styles
 import 'swiper/css';
 import 'swiper/css/pagination';
+import Loading from '../../../SharedComponents/Loading/Loading';
 
 const Testimonials = () => {
     const axiosPublic = useAxiosPublic();
@@ -20,7 +21,7 @@ const Testimonials = () => {
         }
     });
 
-    if (isLoading) return <div className="text-center py-10">Loading Reviews...</div>;
+    if (isLoading) return <Loading></Loading>
 
     return (
         <section className="py-24 bg-[#fcfdfd]">

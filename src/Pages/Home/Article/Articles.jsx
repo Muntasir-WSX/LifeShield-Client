@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import { FaArrowRight } from "react-icons/fa";
 import ArticleCard from "./ArticleCard";
 import useAxiosPublic from "../../../Hooks/UseAxiosPublic";
+import Loading from "../../../SharedComponents/Loading/Loading";
 
 const Articles = () => {
   const axiosPublic = useAxiosPublic();
@@ -21,7 +22,7 @@ const Articles = () => {
   });
 
   if (isLoading)
-    return <div className="text-center py-20 text-green-600 font-bold">Loading Insights...</div>;
+    return <Loading></Loading>
 
   return (
     <section className="py-20 bg-white">

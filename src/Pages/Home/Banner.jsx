@@ -1,108 +1,124 @@
-import React from 'react';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import 'swiper/css';
-import 'swiper/css/pagination';
-import { Autoplay, Pagination } from 'swiper/modules';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { FaArrowRight } from 'react-icons/fa';
+
+const slides = [
+    {
+        id: 1,
+        title: "Secure Your Tomorrow Today",
+        tagline: "Life Shield offers flexible insurance plans that grow with you and your family's dreams.",
+        image: "https://res.cloudinary.com/dnk0bvpym/image/upload/v1770828305/family3_jcxcz2.jpg",
+    },
+    {
+        id: 2,
+        title: "Protect What Matters Most",
+        tagline: "Experience peace of mind with 24/7 support and the fastest claim processing in the industry.",
+        image: "https://res.cloudinary.com/dnk0bvpym/image/upload/v1770828867/family4_rofzlz.jpg",
+    },
+    {
+        id: 3,
+        title: "Investment for Your Lifetime",
+        tagline: "Smart savings coupled with comprehensive protection. Join thousands of happy families.",
+        image: "https://res.cloudinary.com/dnk0bvpym/image/upload/v1770828308/family2_bku5yt.jpg",
+    },
+
+    {
+    id: 4,
+    title: "Health is Your Greatest Wealth",
+    tagline: "Ensure world-class medical protection for you and your loved ones with our premium health covers.",
+    image: "https://res.cloudinary.com/dnk0bvpym/image/upload/v1770828305/Family1_axitsd.jpg",
+}
+];
 
 const Banner = () => {
-    const slides = [
-        {
-            image: "https://res.cloudinary.com/dnk0bvpym/image/upload/v1770828305/family3_jcxcz2.jpg",
-            title: "Secure Your Tomorrow Today",
-            sub: "Award Winning Insurance Company",
-            description: "Only our company help individuals and businesses manage risks and protect their financial well-being without any extra cost."
-        },
-        
-        {
-            image: "https://res.cloudinary.com/dnk0bvpym/image/upload/v1770828867/family4_rofzlz.jpg",
-            title: "Protect Your Family's Happiness",
-            sub: "Trusted Life Insurance Provider",
-             description: "We provide comprehensive coverage that ensures your loved ones stay financially secure, no matter what the future holds."
-        }
-        ,
-        {
-            image: "https://res.cloudinary.com/dnk0bvpym/image/upload/v1770828308/family2_bku5yt.jpg",
-            title: "Protect Your Family's Future",
-            sub: "Trusted By Millions",
-            description: "We provide modern, transparent life insurance solutions tailored to your unique needs and lifestyle."
-        },
-        {
-            image: "https://res.cloudinary.com/dnk0bvpym/image/upload/v1770828305/Family1_axitsd.jpg", 
-            title: "A Legacy of Trust & Safety",
-            sub: "Leading Insurance Provider",
-            description: "Simple, fast, and reliable insurance management for everyone. Explore our policies and get a quote now."
-        }
-    ];
+    const [current, setCurrent] = useState(0);
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setCurrent((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
+        }, 6000); // প্রতি ৬ সেকেন্ড পর স্লাইড পরিবর্তন হবে
+        return () => clearInterval(timer);
+    }, []);
 
     return (
-        <div className="w-full h-[500px] md:h-[650px] bg-[#00332c]"> {/* Background color for consistent look with opacity */}
-            <Swiper
-                spaceBetween={0}
-                centeredSlides={true}
-                autoplay={{
-                    delay: 4000, 
-                    disableOnInteraction: false,
-                }}
-                pagination={{
-                    clickable: true,
-                }}
-                navigation={false} 
-                modules={[Autoplay, Pagination]}
-                className="mySwiper h-full"
-            >
-                {slides.map((slide, index) => (
-                    <SwiperSlide key={index}>
-                        <div className="relative w-full h-full flex items-center overflow-hidden">
-                            {/* Background Image with 50% Opacity */}
-                            <div 
-                                className="absolute inset-0 bg-cover bg-center opacity-50 transition-transform duration-700 hover:scale-105"
-                                style={{ 
-                                    backgroundImage: `url(${slide.image})`,
-                                    backgroundRepeat: 'no-repeat'
-                                }}
-                            ></div>
+        <div className="relative h-[85vh] md:h-screen w-full overflow-hidden bg-[#00332c]">
+            <AnimatePresence mode='wait'>
+                <motion.div
+                    key={current}
+                    initial={{ opacity: 0, scale: 1.1 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 1.5 }}
+                    className="absolute inset-0"
+                >
+                    {/* Background with Zoom-in Animation */}
+                    <div 
+                        className="absolute inset-0 bg-cover bg-center"
+                        style={{ backgroundImage: `url(${slides[current].image})` }}
+                    >
+                        {/* Gradient Overlay for better readability */}
+                        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent"></div>
+                    </div>
 
-                            {/* Gradient Overlay for better readability */}
-                            <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent"></div>
+                    {/* Content Section */}
+                    <div className="relative h-full flex items-center px-6 md:px-20 lg:px-32 max-w-7xl mx-auto">
+                        <div className="max-w-3xl text-white">
+                            <motion.h1 
+                                initial={{ x: -50, opacity: 0 }}
+                                animate={{ x: 0, opacity: 1 }}
+                                transition={{ delay: 0.3, duration: 0.8 }}
+                                className="text-5xl md:text-7xl lg:text-8xl font-black mb-6 leading-[1.1]"
+                            >
+                                {slides[current].title}
+                            </motion.h1>
+                            
+                            <motion.p 
+                                initial={{ x: -50, opacity: 0 }}
+                                animate={{ x: 0, opacity: 1 }}
+                                transition={{ delay: 0.5, duration: 0.8 }}
+                                className="text-lg md:text-2xl mb-10 text-gray-300 font-light max-w-xl"
+                            >
+                                {slides[current].tagline}
+                            </motion.p>
 
-                            <div className="container mx-auto px-6 md:px-12 relative z-10 text-white">
-                                <div className="max-w-2xl space-y-4 md:space-y-6">
-                                    {/* Sub title badge */}
-                                    <div className="inline-block">
-                                        <span className="bg-green-600/20 backdrop-blur-sm px-4 py-2 rounded-full text-xs md:text-sm font-medium border border-green-500/30 text-green-400">
-                                            🛡️ {slide.sub}
-                                        </span>
-                                    </div>
-                                    
-                                    {/* Main Heading */}
-                                    <h1 className="text-4xl md:text-7xl font-bold leading-tight animate-fade-in">
-                                        {slide.title}
-                                    </h1>
-                                    
-                                    {/* Description */}
-                                    <p className="text-sm md:text-lg text-gray-200 max-w-lg leading-relaxed">
-                                        {slide.description}
-                                    </p>
-                                    
-                                    {/* CTA Button */}
-                                    <div className="pt-4">
-                                        <button className="bg-green-600 hover:bg-green-700 text-white px-6 md:px-8 py-3 md:py-4 rounded-md font-bold text-sm md:text-lg transition-all duration-300 flex items-center gap-2 shadow-lg shadow-green-900/20">
-                                            Get a Free Quote
-                                            <span>→</span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
+                            <motion.div
+                                initial={{ y: 30, opacity: 0 }}
+                                animate={{ y: 0, opacity: 1 }}
+                                transition={{ delay: 0.7, duration: 0.5 }}
+                                className="flex flex-wrap gap-4"
+                            >
+                                {/* Main Redirect Button */}
+                                <Link to="/all-policies">
+                                    <button className="group relative bg-green-500 hover:bg-green-600 text-[#00332c] px-8 md:px-10 py-4 rounded-full text-lg font-black uppercase tracking-widest transition-all shadow-2xl flex items-center gap-3">
+                                        Get a Free Quote
+                                        <FaArrowRight className="group-hover:translate-x-2 transition-transform" />
+                                    </button>
+                                </Link>
+
+                                <button className="px-8 md:px-10 py-4 rounded-full text-lg font-bold border-2 border-white/30 hover:bg-white/10 transition-all">
+                                    Learn More
+                                </button>
+                            </motion.div>
                         </div>
-                    </SwiperSlide>
-                ))}
-            </Swiper>
-            
-            {/* Custom Pagination Style */}
-            <style dangerouslySetInnerHTML={{ __html: `
-                .swiper-pagination-bullet { background: white !important; opacity: 0.5; }
-                .swiper-pagination-bullet-active { background: #16a34a !important; opacity: 1; width: 25px; border-radius: 5px; transition: all 0.3s; }
-            `}} />
+                    </div>
+                </motion.div>
+            </AnimatePresence>
+
+            {/* Custom Indicators (Bottom Left Style) */}
+            <div className="absolute bottom-12 left-6 md:left-20 flex items-center gap-4">
+                <span className="text-white font-black text-xl">0{current + 1}</span>
+                <div className="flex gap-2">
+                    {slides.map((_, index) => (
+                        <div 
+                            key={index}
+                            onClick={() => setCurrent(index)}
+                            className={`h-1.5 transition-all duration-500 rounded-full cursor-pointer ${current === index ? 'w-12 bg-green-500' : 'w-4 bg-white/30'}`}
+                        ></div>
+                    ))}
+                </div>
+                <span className="text-white/50 font-bold text-sm">0{slides.length}</span>
+            </div>
         </div>
     );
 };

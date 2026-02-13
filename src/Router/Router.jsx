@@ -6,6 +6,7 @@ import ArticleDetails from '../Pages/Home/Article/ArticleDetails';
 import Blogs from '../Pages/Blogs/Blogs';
 import SignIn from '../Pages/AuthPages/SignIn/SignIn';
 import Register from '../Pages/AuthPages/Register/Register';
+import PrivateRoutes from '../Routes/PrivateRoutes';
 
 const Router = createBrowserRouter([
   {
@@ -36,8 +37,8 @@ const Router = createBrowserRouter([
   // auth routes
 
    {
-        path: "SignIn",
-    element: <SignIn></SignIn>
+        path: "signIn",
+    element:  <SignIn></SignIn>
       },
       {
         path:"register",

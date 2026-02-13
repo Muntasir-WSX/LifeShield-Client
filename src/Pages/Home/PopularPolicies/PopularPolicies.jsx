@@ -2,6 +2,7 @@ import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import useAxiosPublic from "../../../Hooks/UseAxiosPublic"
 import PolicyCard from './PopularCard'
+import Loading from '../../../SharedComponents/Loading/Loading';
 
 
 const PopularPolicies = () => {
@@ -15,7 +16,7 @@ const PopularPolicies = () => {
         }
     });
 
-    if (isLoading) return <div className="text-center py-20 text-2xl font-bold">Loading Policies...</div>;
+    if (isLoading) return <Loading></Loading>
 
     return (
         <section className="py-20 bg-gray-50">
