@@ -34,3 +34,11 @@
 label:hover span {
     background-color: #16a34a; 
 }
+
+.drawer-side .menu li a {
+    padding: 12px 20px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}

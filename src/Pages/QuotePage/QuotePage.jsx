@@ -95,7 +95,7 @@ const QuotePage = () => {
                     <p className="text-gray-400">Per Month</p>
                     
                     <div className="mt-10 w-full space-y-4">
-                        <button className="btn btn-success w-full rounded-xl">Buy Now</button>
+                        <button className="btn btn-success w-full rounded-xl">Apply for Policy</button>
                         <p className="text-[10px] text-gray-500 italic">*Calculated based on standard health conditions.</p>
                     </div>
                 </div>

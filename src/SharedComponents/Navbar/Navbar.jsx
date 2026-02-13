@@ -91,12 +91,12 @@ const Navbar = () => {
           </div>
 
           <div className="hidden lg:block">
-            <Link to="/"><LifeShieldLogo /></Link>
+            <LifeShieldLogo />
           </div>
         </div>
 
         <div className="navbar-center lg:hidden">
-          <Link to="/"><LifeShieldLogo /></Link>
+          <LifeShieldLogo />
         </div>
 
         <div className="navbar-center hidden lg:flex">
