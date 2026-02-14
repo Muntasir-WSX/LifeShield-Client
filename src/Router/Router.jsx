@@ -81,6 +81,10 @@ const Router = createBrowserRouter([
       </PrivateRoutes>
     ),
     children: [
+      { 
+      index: true, 
+      element: <MyPolicies /> 
+    },
       { path: "my-policies", 
         element: <MyPolicies></MyPolicies>
       },
