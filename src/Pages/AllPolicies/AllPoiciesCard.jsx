@@ -47,7 +47,7 @@ const AllPoliciesCard = ({ policy }) => {
                 <div className="mt-auto">
                     <Link 
                         to={`/policy/${_id}`}
-                        className="w-full bg-[#f8fafc] group-hover:bg-green-600 group-hover:text-white text-[#00332c] font-black py-4 rounded-2xl flex items-center justify-center gap-3 transition-all duration-300"
+                        className="w-full bg-[#00332C] hover:bg-green-900 group-hover:text-white text-white font-black py-4 rounded-2xl flex items-center justify-center gap-3 transition-all duration-300"
                     >
                         View Details <FaArrowRight className="text-sm" />
                     </Link>

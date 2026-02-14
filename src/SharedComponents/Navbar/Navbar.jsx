@@ -35,6 +35,10 @@ const Navbar = () => {
       <li>
         <NavLink to="/dashboard" onClick={closeDrawer} className={({ isActive }) => isActive ? "text-green-500 font-bold" : "hover:text-green-500 transition-colors"}>Dashboard</NavLink>
       </li>
+      <li>
+        <NavLink to="/us" onClick={closeDrawer} className={({ isActive }) => isActive ? "text-green-500 font-bold" : "hover:text-green-500 transition-colors"}>About Us</NavLink>
+      </li>
+
     </>
   );
 

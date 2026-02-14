@@ -90,7 +90,7 @@ const Banner = () => {
                             >
                                 {/* Main Redirect Button */}
                                 <Link to="/quote">
-                                    <button className="group relative bg-green-500 hover:bg-green-600 text-[#00332c] px-8 md:px-10 py-4 rounded-full text-lg font-black uppercase tracking-widest transition-all shadow-2xl flex items-center gap-3">
+                                    <button className="group relative bg-[#00332C] hover:bg-green-600 text-white px-8 md:px-10 py-4 rounded-full text-lg font-black uppercase tracking-widest transition-all shadow-2xl flex items-center gap-3">
                                         Get a Free Quote
                                         <FaArrowRight className="group-hover:translate-x-2 transition-transform" />
                                     </button>

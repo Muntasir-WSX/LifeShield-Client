@@ -62,7 +62,7 @@ const AllPolicies = () => {
           </div>
         </div>
 
-        {/* সার্চ রেজাল্ট কাউন্ট (ঐচ্ছিক কিন্তু ইউজার এক্সপেরিয়েন্সের জন্য ভালো) */}
+       
         <div className="mt-4 px-2">
           <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">
             Showing {policiesData?.result?.length || 0} of{" "}

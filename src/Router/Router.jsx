@@ -17,6 +17,7 @@ import MyPolicies from "../Pages/Customer/MyPolicies/MyPolicies";
 import PaymentStatus from "../Pages/Customer/PaymentStatus/PaymentStatus";
 import ClaimRequest from "../Pages/Customer/ClaimRequest/ClaimRequest";
 import PaymentPage from "../Pages/Customer/PaymentPage/PaymentPage";
+import AboutUs from "../Pages/AboutUs/AboutUs";
 
 const Router = createBrowserRouter([
   {
@@ -58,6 +59,10 @@ const Router = createBrowserRouter([
             <QuoteApplicationFrom></QuoteApplicationFrom>
           </PrivateRoutes>
         ),
+      },
+      {
+          path: "us",
+          element:<AboutUs></AboutUs>
       },
       {
         path: "blog-details/:id",
