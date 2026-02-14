@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom'; 
 import useAuth from '../../Hooks/useAuth';
 import useAxiosPublic from '../../Hooks/UseAxiosPublic';
 import Swal from 'sweetalert2';
@@ -6,6 +7,7 @@ import Swal from 'sweetalert2';
 const QuoteApplicationFrom = () => {
     const { user } = useAuth();
     const axiosPublic = useAxiosPublic();
+    const navigate = useNavigate();
 
     const handleApplication = async (e) => {
         e.preventDefault();
@@ -25,8 +27,14 @@ const QuoteApplicationFrom = () => {
 
         const res = await axiosPublic.post('/applications', applicationData);
         if(res.data.insertedId) {
-            Swal.fire("Success!", "Application submitted for review.", "success");
-            form.reset();
+            Swal.fire({
+                title: "Success!",
+                text: "Application submitted. Please complete the payment.",
+                icon: "success",
+                confirmButtonColor: "#00332c"
+            }).then(() => {
+                navigate('/dashboard/payment/:id', { state: { appId: res.data.insertedId } });
+            });
         }
     };
 
@@ -50,7 +58,9 @@ const QuoteApplicationFrom = () => {
                 <div className="divider">Health Disclosure</div>
                 <textarea name="health" className="textarea textarea-bordered w-full" placeholder="Any pre-existing medical conditions?"></textarea>
 
-                <button className="btn btn-block bg-[#00332c] text-white hover:bg-black">Submit Application</button>
+                <button className="btn btn-block bg-[#00332c] text-white hover:bg-black rounded-xl h-14">
+                    Proceed to Payment
+                </button>
             </form>
         </div>
     );

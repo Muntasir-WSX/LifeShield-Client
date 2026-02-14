@@ -84,15 +84,16 @@ const Router = createBrowserRouter([
       { path: "my-policies", 
         element: <MyPolicies></MyPolicies>
       },
+      { path: "payment/:id", 
+        element: <PaymentPage></PaymentPage>
+      }, 
       { path: "payment-status", 
         element: <PaymentStatus></PaymentStatus> 
       },
       { path: "claim-request", 
         element: <ClaimRequest></ClaimRequest>
       },
-      { path: "payment/:id", 
-        element: <PaymentPage></PaymentPage>
-      }, 
+      
     ],
   },
   // auth routes

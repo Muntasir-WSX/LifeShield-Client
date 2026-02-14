@@ -2,66 +2,112 @@ import React from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
 import { CreditCard, FileText, Home, ShieldCheck, UserCircle, Menu, X, LayoutDashboard } from 'lucide-react';
 import LifeShieldLogo from '../SharedComponents/LifeShieldLogo/LifeShieldLogo';
+import Loading from '../SharedComponents/Loading/Loading';
+import useRole from '../Hooks/useRole';
 
 const DashboardLayout = () => {
-
+    const [userRole, isRoleLoading] = useRole();
+    if (isRoleLoading) {
+        return <Loading></Loading>
+    }
     const closeDrawer = () => {
         const drawerCheckbox = document.getElementById('dashboard-drawer');
         if (drawerCheckbox) drawerCheckbox.checked = false;
     };
 
-    const sideLinks = (
-        <ul className="space-y-2 mt-4">
-            <p className="text-[10px] uppercase tracking-widest text-gray-500 font-bold mb-4 ml-2">Main Menu</p>
-            <li>
-                <NavLink 
-                    to="/dashboard/my-policies" 
-                    onClick={closeDrawer}
-                    className={({ isActive }) => `flex items-center gap-3 p-3 rounded-xl transition-all duration-300 ${isActive ? 'bg-green-500 text-white shadow-lg shadow-green-900/20' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}
-                >
-                    <ShieldCheck size={18} />
-                    <span className="font-medium">My Policies</span>
-                </NavLink>
-            </li>
-            <li>
-                <NavLink 
-                    to="/dashboard/payment-status" 
-                    onClick={closeDrawer}
-                    className={({ isActive }) => `flex items-center gap-3 p-3 rounded-xl transition-all duration-300 ${isActive ? 'bg-green-500 text-white shadow-lg shadow-green-900/20' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}
-                >
-                    <CreditCard size={18} />
-                    <span className="font-medium">Payment Status</span>
-                </NavLink>
-            </li>
-            <li>
-                <NavLink 
-                    to="/dashboard/claim-request" 
-                    onClick={closeDrawer}
-                    className={({ isActive }) => `flex items-center gap-3 p-3 rounded-xl transition-all duration-300 ${isActive ? 'bg-green-500 text-white shadow-lg shadow-green-900/20' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}
-                >
-                    <FileText size={18} />
-                    <span className="font-medium">Claim Request</span>
-                </NavLink>
-            </li>
-            
-            <div className="pt-8 mb-4">
-                <p className="text-[10px] uppercase tracking-widest text-gray-500 font-bold ml-2">Settings</p>
-            </div>
-            
-            <li>
-                <NavLink to="/profile" onClick={closeDrawer} className="flex items-center gap-3 p-3 rounded-xl text-gray-400 hover:bg-white/5 hover:text-white transition-all">
-                    <UserCircle size={18} />
-                    <span className="font-medium">Profile Setting</span>
-                </NavLink>
-            </li>
-            <li>
-                <NavLink to="/" onClick={closeDrawer} className="flex items-center gap-3 p-3 rounded-xl text-gray-400 hover:bg-white/5 hover:text-white transition-all">
-                    <Home size={18} />
-                    <span className="font-medium">Back to Home</span>
-                </NavLink>
-            </li>
-        </ul>
-    );
+ const sideLinks = (
+    <ul className="space-y-2 mt-4">
+        <p className="text-[10px] uppercase tracking-widest text-gray-500 font-bold mb-4 ml-2">Main Menu</p>
+
+        {/* ------------------- CUSTOMER ROUTES ------------------- */}
+        {userRole === "customer" && (
+            <>
+                <li>
+                    <NavLink to="/dashboard/my-policies" onClick={closeDrawer} className={({ isActive }) => `flex items-center gap-3 p-3 rounded-xl transition-all duration-300 ${isActive ? 'bg-green-500 text-white shadow-lg' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}>
+                        <ShieldCheck size={18} /> <span className="font-medium">My Policies</span>
+                    </NavLink>
+                </li>
+                <li>
+                    <NavLink to="/dashboard/payment-status" onClick={closeDrawer} className={({ isActive }) => `flex items-center gap-3 p-3 rounded-xl transition-all duration-300 ${isActive ? 'bg-green-500 text-white shadow-lg' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}>
+                        <CreditCard size={18} /> <span className="font-medium">Payment Status</span>
+                    </NavLink>
+                </li>
+                <li>
+                    <NavLink to="/dashboard/claim-request" onClick={closeDrawer} className={({ isActive }) => `flex items-center gap-3 p-3 rounded-xl transition-all duration-300 ${isActive ? 'bg-green-500 text-white shadow-lg' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}>
+                        <FileText size={18} /> <span className="font-medium">Claim Request</span>
+                    </NavLink>
+                </li>
+            </>
+        )}
+
+        {/* ------------------- ADMIN ROUTES ------------------- */}
+        {userRole === "admin" && (
+            <>
+                <li>
+                    <NavLink to="/dashboard/manage-applications" onClick={closeDrawer} className={({ isActive }) => `flex items-center gap-3 p-3 rounded-xl transition-all duration-300 ${isActive ? 'bg-green-500 text-white shadow-lg' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}>
+                        <ShieldCheck size={18} /> <span className="font-medium">Manage Applications</span>
+                    </NavLink>
+                </li>
+                <li>
+                    <NavLink to="/dashboard/manage-users" onClick={closeDrawer} className={({ isActive }) => `flex items-center gap-3 p-3 rounded-xl transition-all duration-300 ${isActive ? 'bg-green-500 text-white shadow-lg' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}>
+                        <UserCircle size={18} /> <span className="font-medium">Manage Users</span>
+                    </NavLink>
+                </li>
+                <li>
+                    <NavLink to="/dashboard/manage-policies" onClick={closeDrawer} className={({ isActive }) => `flex items-center gap-3 p-3 rounded-xl transition-all duration-300 ${isActive ? 'bg-green-500 text-white shadow-lg' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}>
+                        <FileText size={18} /> <span className="font-medium">Manage Policies</span>
+                    </NavLink>
+                </li>
+                <li>
+                    <NavLink to="/dashboard/manage-transactions" onClick={closeDrawer} className={({ isActive }) => `flex items-center gap-3 p-3 rounded-xl transition-all duration-300 ${isActive ? 'bg-green-500 text-white shadow-lg' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}>
+                        <CreditCard size={18} /> <span className="font-medium">Transactions</span>
+                    </NavLink>
+                </li>
+                <li>
+                    <NavLink to="/dashboard/manage-blogs" onClick={closeDrawer} className={({ isActive }) => `flex items-center gap-3 p-3 rounded-xl transition-all duration-300 ${isActive ? 'bg-green-500 text-white shadow-lg' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}>
+                        <FileText size={18} /> <span className="font-medium">All Blogs</span>
+                    </NavLink>
+                </li>
+            </>
+        )}
+
+        {/* ------------------- AGENT ROUTES ------------------- */}
+        {userRole === "agent" && (
+            <>
+                <li>
+                    <NavLink to="/dashboard/assigned-customers" onClick={closeDrawer} className={({ isActive }) => `flex items-center gap-3 p-3 rounded-xl transition-all duration-300 ${isActive ? 'bg-green-500 text-white shadow-lg' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}>
+                        <UserCircle size={18} /> <span className="font-medium">Assigned Customers</span>
+                    </NavLink>
+                </li>
+                <li>
+                    <NavLink to="/dashboard/manage-blogs" onClick={closeDrawer} className={({ isActive }) => `flex items-center gap-3 p-3 rounded-xl transition-all duration-300 ${isActive ? 'bg-green-500 text-white shadow-lg' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}>
+                        <FileText size={18} /> <span className="font-medium">My Blogs</span>
+                    </NavLink>
+                </li>
+                <li>
+                    <NavLink to="/dashboard/policy-clearance" onClick={closeDrawer} className={({ isActive }) => `flex items-center gap-3 p-3 rounded-xl transition-all duration-300 ${isActive ? 'bg-green-500 text-white shadow-lg' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}>
+                        <ShieldCheck size={18} /> <span className="font-medium">Policy Clearance</span>
+                    </NavLink>
+                </li>
+            </>
+        )}
+
+        {/* ------------------- COMMON SETTINGS ------------------- */}
+        <div className="pt-8 mb-4 border-t border-white/5">
+            <p className="text-[10px] uppercase tracking-widest text-gray-500 font-bold ml-2">Account</p>
+        </div>
+        <li>
+            <NavLink to="/profile" onClick={closeDrawer} className="flex items-center gap-3 p-3 rounded-xl text-gray-400 hover:bg-white/5 hover:text-white transition-all">
+                <UserCircle size={18} /> <span className="font-medium">Profile Setting</span>
+            </NavLink>
+        </li>
+        <li>
+            <NavLink to="/" onClick={closeDrawer} className="flex items-center gap-3 p-3 rounded-xl text-gray-400 hover:bg-white/5 hover:text-white transition-all">
+                <Home size={18} /> <span className="font-medium">Back to Home</span>
+            </NavLink>
+        </li>
+    </ul>
+);
 
     return (
         <div className="drawer lg:drawer-open min-h-screen bg-[#f3f4f6]">
@@ -89,10 +135,7 @@ const DashboardLayout = () => {
                                 </h2>
                                 <p className="text-gray-500 mt-1">Manage your life insurance assets & requests</p>
                             </div>
-                            <div className="px-4 py-2 bg-white rounded-2xl border flex items-center gap-3 shadow-sm self-start">
-                                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-                                <span className="text-sm font-bold text-[#00332c]">System Active</span>
-                            </div>
+                            
                         </div>
                         
                         {/* Render Pages */}
