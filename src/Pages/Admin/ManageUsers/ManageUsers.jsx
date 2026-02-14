@@ -77,13 +77,13 @@ const ManageUsers = () => {
                                     </span>
                                 </td>
                                 <td className="flex gap-2">
-                                    {/* ইউজার কাস্টমার হলে তাকে এজেন্ট বানানোর বাটন */}
+                                 
                                     {user.role !== 'agent' && (
                                         <button onClick={() => handleMakeRole(user, 'agent')} className="btn btn-xs bg-blue-500 text-white border-none hover:bg-blue-600">
                                             Make Agent
                                         </button>
                                     )}
-                                    {/* এজেন্ট বা কাস্টমারকে অ্যাডমিন বানানোর বাটন */}
+                                   
                                     {user.role !== 'admin' && (
                                         <button onClick={() => handleMakeRole(user, 'admin')} className="btn btn-xs bg-purple-500 text-white border-none hover:bg-purple-600">
                                             Make Admin

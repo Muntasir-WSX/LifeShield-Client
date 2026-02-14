@@ -6,8 +6,6 @@ import { UserCheck, XCircle, Info } from 'lucide-react';
 
 const ManageApplications = () => {
     const axiosSecure = useAxiosSecure();
-
-    // ১. সব অ্যাপ্লিকেশন ডাটা আনা
     const { data: applications = [], refetch: refetchApps } = useQuery({
         queryKey: ['admin-applications'],
         queryFn: async () => {
@@ -15,8 +13,6 @@ const ManageApplications = () => {
             return res.data;
         }
     });
-
-    // ২. সব এজেন্টদের ডাটা আনা (ড্রপডাউনের জন্য)
     const { data: agents = [] } = useQuery({
         queryKey: ['all-agents'],
         queryFn: async () => {
@@ -24,8 +20,6 @@ const ManageApplications = () => {
             return res.data;
         }
     });
-
-    // ৩. এজেন্ট অ্যাসাইন করার ফাংশন
     const handleAssignAgent = (appId, agent) => {
         const [agentEmail, agentName] = agent.split('|');
         
