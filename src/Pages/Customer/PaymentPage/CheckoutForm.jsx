@@ -12,12 +12,27 @@ const CheckoutForm = ({ amount, appId }) => {
     const [error, setError] = useState('');
     const [clientSecret, setClientSecret] = useState('');
     const [processing, setProcessing] = useState(false);
+    const [applicationData, setApplicationData] = useState(null); 
     const stripe = useStripe();
     const elements = useElements();
     const axiosSecure = useAxiosSecure();
     const { user } = useAuth();
     const navigate = useNavigate();
 
+    useEffect(() => {
+        const fetchAppData = async () => {
+            try {
+                const res = await axiosSecure.get(`/application/${appId}`); 
+            setApplicationData(res.data);
+        } catch (err) {
+            console.error("Fetch App Error:", err);
+           
+        };
+        };
+        if (appId) fetchAppData();
+    }, [appId, axiosSecure]);
+
+    // Stripe Client Secret তৈরি
     useEffect(() => {
         if (amount > 0) {
             axiosSecure.post('/create-payment-intent', { price: parseFloat(amount) })
@@ -53,25 +68,27 @@ const CheckoutForm = ({ amount, appId }) => {
             setProcessing(false);
         } else {
             if (paymentIntent.status === "succeeded") {
+               
                 const paymentInfo = {
                     transactionId: paymentIntent.id,
                     email: user?.email,
                     amount: amount,
                     appId: appId,
                     date: new Date(),
-                    // পেমেন্ট হয়েছে, এখন অ্যাডমিন অ্যাপ্রুভালের জন্য অপেক্ষা করবে
-                    status: 'Awaiting Approval', 
-                    paymentStatus: 'Paid'
+                    status: 'Pending', 
+                    paymentStatus: 'Paid', 
+                    agentEmail: applicationData?.agentEmail || '', 
+                    agentName: applicationData?.agentName || '',
+                    policyId: applicationData?.policyId || '' 
                 };
                 
                 try {
                     const res = await axiosSecure.patch(`/applications/payment/${appId}`, paymentInfo);
                     if (res.data.modifiedCount > 0) {
-                        // কোনো পপ-আপ ছাড়াই সরাসরি ন্যাভিগেট
                         navigate('/dashboard/my-policies');
                     }
                 } catch (err) {
-                    setError("Payment successful, but failed to update database. Please contact support.");
+                    setError("Payment successful, but failed to update database.");
                 } finally {
                     setProcessing(false);
                 }
@@ -83,7 +100,7 @@ const CheckoutForm = ({ amount, appId }) => {
         <form onSubmit={handleSubmit} className="w-full max-w-lg mx-auto space-y-6">
             <div className="space-y-2">
                 <label className="text-sm font-bold text-gray-600 ml-1">Card Details</label>
-                <div className="p-4 bg-gray-50 rounded-2xl border-2 border-transparent focus-within:border-[#00332c] focus-within:bg-white transition-all duration-300 shadow-inner min-h-[60px] overflow-visible">
+                <div className="p-4 bg-gray-50 rounded-2xl border-2 border-transparent focus-within:border-[#00332c] focus-within:bg-white transition-all duration-300 shadow-inner min-h-[60px]">
                     <CardElement
                         options={{
                             style: {
@@ -91,7 +108,6 @@ const CheckoutForm = ({ amount, appId }) => {
                                     fontSize: '17px', 
                                     color: '#00332c',
                                     fontFamily: 'Inter, sans-serif',
-                                    letterSpacing: '0.025em',
                                     '::placeholder': { color: '#94a3b8' },
                                 },
                                 invalid: { color: '#ef4444' },
@@ -103,8 +119,8 @@ const CheckoutForm = ({ amount, appId }) => {
             </div>
             
             {error && (
-                <div className="bg-red-50 text-red-600 p-4 rounded-xl text-sm font-medium border border-red-100 animate-pulse">
-                    ⚠️ {error}
+                <div className="bg-red-50 text-red-600 p-4 rounded-xl text-sm font-medium border border-red-100">
+                     {error}
                 </div>
             )}
 
@@ -116,7 +132,7 @@ const CheckoutForm = ({ amount, appId }) => {
                 }`}
             >
                 {processing ? (
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 text-white">
                          <Loading /> <span>Processing Payment...</span>
                     </div>
                 ) : (

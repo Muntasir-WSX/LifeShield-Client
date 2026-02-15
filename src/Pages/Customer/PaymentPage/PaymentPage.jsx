@@ -42,12 +42,12 @@ const PaymentPage = () => {
                 {/* Stripe Elements Provider */}
                 <div className="p-4 md:p-6 border-2 border-green-500/20 rounded-[1.5rem] md:rounded-3xl bg-green-50/10">
                     <Elements stripe={stripePromise}>
-                        <CheckoutForm amount={amount} appId={id} />
+                        <CheckoutForm amount={amount}  appId={id} />
                     </Elements>
                 </div>
                 
                 <p className="mt-6 text-[10px] md:text-xs text-gray-400 uppercase tracking-widest font-bold">
-                    🛡️ Secure 256-bit SSL Encrypted Payment
+                     Secure 256-bit SSL Encrypted Payment
                 </p>
             </div>
         </div>
