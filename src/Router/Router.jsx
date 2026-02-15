@@ -18,6 +18,11 @@ import PaymentStatus from "../Pages/Customer/PaymentStatus/PaymentStatus";
 import ClaimRequest from "../Pages/Customer/ClaimRequest/ClaimRequest";
 import PaymentPage from "../Pages/Customer/PaymentPage/PaymentPage";
 import AboutUs from "../Pages/AboutUs/AboutUs";
+import ManageApplications from "../Pages/Admin/ManageApplications/ManageApplications";
+import ManageUsers from "../Pages/Admin/ManageUsers/ManageUsers";
+import ManagePolicies from "../Pages/Admin/ManagePolicies/ManagePolicies";
+import Transactions from "../Pages/Admin/Transactions/Transactions";
+import AllBlogs from "../Pages/Admin/AllBlogs/AllBlogs";
 
 const Router = createBrowserRouter([
   {
@@ -91,23 +96,38 @@ const Router = createBrowserRouter([
       element: <MyPolicies /> 
     },
       { path: "my-policies", 
-        element: <MyPolicies></MyPolicies>
+        element: <MyPolicies></MyPolicies> //customer route
       },
       { path: "payment/:id", 
-        element: <PaymentPage></PaymentPage>
+        element: <PaymentPage></PaymentPage> //customer route
       }, 
-      // {
-      //   path:"payment-page",
-      //   element:
-      // },
       { path: "payment-status", 
-        element: <PaymentStatus></PaymentStatus> 
+        element: <PaymentStatus></PaymentStatus> //customer route
       },
     
       { path: "claim-request", 
-        element: <ClaimRequest></ClaimRequest>
+        element: <ClaimRequest></ClaimRequest>  //customer route
       },
-      
+      {
+        path:"manage-applications",
+        element:<ManageApplications></ManageApplications>
+      },
+      {
+        path:"manage-users",
+        element:<ManageUsers></ManageUsers>
+      },
+      {
+        path:"manage-policies",
+        element:<ManagePolicies></ManagePolicies>
+      },
+      {
+        path:"manage-transactions",
+        element:<Transactions></Transactions>
+      },
+      {
+        path:"manage-blogs",
+        element:<AllBlogs></AllBlogs>
+      }
     ],
   },
   // auth routes

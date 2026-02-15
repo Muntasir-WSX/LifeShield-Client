@@ -1,8 +1,8 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import useAxiosSecure from '../../Hooks/useAxiosSecure';
-import { Trash2, UserCog, ShieldCheck } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 import Swal from 'sweetalert2';
+import useAxiosSecure from '../../../Hooks/UseAxiosSecure';
 
 const ManageUsers = () => {
     const axiosSecure = useAxiosSecure();
