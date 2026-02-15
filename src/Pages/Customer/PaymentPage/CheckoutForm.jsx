@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
-import Swal from 'sweetalert2';
 import useAuth from '../../../Hooks/useAuth';
 import useAxiosSecure from '../../../Hooks/UseAxiosSecure';
 import Loading from '../../../SharedComponents/Loading/Loading';
 import { useNavigate } from 'react-router-dom';
+import Mastercard from "../../../assets/mastercard.png";
+import stripeImage from "../../../assets/stripe.png";
+import visa from "../../../assets/visa.jpg";
 
 const CheckoutForm = ({ amount, appId }) => {
     const [error, setError] = useState('');
@@ -22,6 +24,7 @@ const CheckoutForm = ({ amount, appId }) => {
                 .then(res => {
                     setClientSecret(res.data.clientSecret);
                 })
+                .catch(err => console.error("Stripe Secret Error:", err));
         }
     }, [axiosSecure, amount]);
 
@@ -33,19 +36,7 @@ const CheckoutForm = ({ amount, appId }) => {
         if (card === null) return;
 
         setProcessing(true);
-
-        const { error: paymentMethodError, paymentMethod } = await stripe.createPaymentMethod({
-            type: 'card',
-            card,
-        });
-
-        if (paymentMethodError) {
-            setError(paymentMethodError.message);
-            setProcessing(false);
-            return;
-        } else {
-            setError('');
-        }
+        setError('');
 
         const { paymentIntent, error: confirmError } = await stripe.confirmCardPayment(clientSecret, {
             payment_method: {
@@ -68,72 +59,80 @@ const CheckoutForm = ({ amount, appId }) => {
                     amount: amount,
                     appId: appId,
                     date: new Date(),
-                    status: 'Paid'
-                }
+                    // পেমেন্ট হয়েছে, এখন অ্যাডমিন অ্যাপ্রুভালের জন্য অপেক্ষা করবে
+                    status: 'Awaiting Approval', 
+                    paymentStatus: 'Paid'
+                };
                 
-                const res = await axiosSecure.patch(`/applications/payment/${appId}`, paymentInfo);
-                if (res.data.modifiedCount > 0) {
-                    Swal.fire({
-                        title: "Success!",
-                        text: `Transaction ID: ${paymentIntent.id}`,
-                        icon: "success",
-                        confirmButtonColor: "#00332c"
-                    }).then(() => {
+                try {
+                    const res = await axiosSecure.patch(`/applications/payment/${appId}`, paymentInfo);
+                    if (res.data.modifiedCount > 0) {
+                        // কোনো পপ-আপ ছাড়াই সরাসরি ন্যাভিগেট
                         navigate('/dashboard/my-policies');
-                    });
+                    }
+                } catch (err) {
+                    setError("Payment successful, but failed to update database. Please contact support.");
+                } finally {
+                    setProcessing(false);
                 }
-                setProcessing(false);
             }
         }
     };
 
     return (
-        <form onSubmit={handleSubmit} className="w-full max-w-lg mx-auto space-y-4 md:space-y-6">
-            {/* Card Input Container */}
-            <div className="p-3 md:p-4 bg-white rounded-xl md:rounded-2xl border border-gray-200 focus-within:border-[#00332c] transition-all duration-300">
-                <CardElement
-                    options={{
-                        style: {
-                            base: {
-                                fontSize: '16px', 
-                                color: '#00332c',
-                                fontSmoothing: 'antialiased',
-                                '::placeholder': { color: '#aab7c4' },
+        <form onSubmit={handleSubmit} className="w-full max-w-lg mx-auto space-y-6">
+            <div className="space-y-2">
+                <label className="text-sm font-bold text-gray-600 ml-1">Card Details</label>
+                <div className="p-4 bg-gray-50 rounded-2xl border-2 border-transparent focus-within:border-[#00332c] focus-within:bg-white transition-all duration-300 shadow-inner min-h-[60px] overflow-visible">
+                    <CardElement
+                        options={{
+                            style: {
+                                base: {
+                                    fontSize: '17px', 
+                                    color: '#00332c',
+                                    fontFamily: 'Inter, sans-serif',
+                                    letterSpacing: '0.025em',
+                                    '::placeholder': { color: '#94a3b8' },
+                                },
+                                invalid: { color: '#ef4444' },
                             },
-                            invalid: { color: '#ef4444' },
-                        },
-                    }}
-                />
+                            hidePostalCode: true, 
+                        }}
+                    />
+                </div>
             </div>
             
-            {/* Error Message */}
             {error && (
-                <div className="bg-red-50 text-red-600 p-3 rounded-lg text-xs md:text-sm font-medium border border-red-100">
-                    {error}
+                <div className="bg-red-50 text-red-600 p-4 rounded-xl text-sm font-medium border border-red-100 animate-pulse">
+                    ⚠️ {error}
                 </div>
             )}
 
-            {/* Submit Button */}
             <button
                 type="submit"
                 disabled={!stripe || !clientSecret || processing}
-                className={`w-full h-12 md:h-14 rounded-xl md:rounded-2xl text-white text-base md:text-lg font-black transition-all duration-300 active:scale-95 shadow-sm ${
-                    processing ? 'bg-gray-400' : 'bg-[#00332c] hover:bg-black'
+                className={`w-full h-14 rounded-2xl text-white text-lg font-black transition-all duration-300 active:scale-95 shadow-lg flex items-center justify-center gap-3 ${
+                    processing ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#00332c] hover:bg-black'
                 }`}
             >
                 {processing ? (
-                    <div className="flex items-center justify-center gap-2">
-                        <Loading /> <span>Processing...</span>
+                    <div className="flex items-center gap-2">
+                         <Loading /> <span>Processing Payment...</span>
                     </div>
                 ) : (
-                    `Pay ৳${amount.toLocaleString('en-BD')}`
+                    <>
+                        <span>Authorize Payment</span>
+                        <span className="opacity-40">|</span>
+                        <span>৳{amount.toLocaleString('en-BD')}</span>
+                    </>
                 )}
             </button>
 
-            {/* Secure Badge - Optional but good for UI */}
-            <p className="text-[10px] md:text-xs text-gray-400 text-center font-medium uppercase tracking-widest mt-4">
-                🔒 Secure SSL Encrypted Payment
-            </p>
+            <div className="flex items-center justify-center gap-4 pt-2">
+                <img src={Mastercard} className="h-6 opacity-40" alt="Mastercard" />
+                <img src={visa} className="h-6 opacity-40" alt="Visa" />
+                <img src={stripeImage} className="h-6 opacity-40" alt="Stripe" />
+            </div>
         </form>
     );
 };
