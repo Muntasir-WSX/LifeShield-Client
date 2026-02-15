@@ -82,7 +82,7 @@ const DashboardLayout = () => {
                         </NavLink>
                     </li>
                     <li>
-                        <NavLink to="/dashboard/manage-blogs" onClick={closeDrawer} className={({ isActive }) => `flex items-center gap-3 p-3 rounded-xl transition-all duration-300 ${isActive ? 'bg-green-500 text-white shadow-lg' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}>
+                        <NavLink to="/dashboard/agent-blogs" onClick={closeDrawer} className={({ isActive }) => `flex items-center gap-3 p-3 rounded-xl transition-all duration-300 ${isActive ? 'bg-green-500 text-white shadow-lg' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}>
                             <FileText size={18} /> <span className="font-medium">My Blogs</span>
                         </NavLink>
                     </li>
