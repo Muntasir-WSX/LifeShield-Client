@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Swal from "sweetalert2";
+import { Info, CheckCircle, XCircle, Clock } from "lucide-react";
 import useAxiosSecure from "../../../Hooks/UseAxiosSecure";
 import useAuth from "../../../Hooks/useAuth";
 
@@ -29,167 +30,164 @@ const AssignedCustomers = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries(["agent-assignments"]);
-      Swal.fire("Updated!", "Status and Purchase Count updated.", "success");
+      Swal.fire({
+        title: "Updated!",
+        text: "The application status has been locked and updated.",
+        icon: "success",
+        timer: 1500,
+        showConfirmButton: false
+      });
     },
   });
 
   const handleStatusChange = (id, newStatus, policyId) => {
-    if (newStatus === "Approved") {
-      Swal.fire({
-        title: "Are you sure?",
-        text: "Approving will increase the policy purchase count!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Yes, Approve!",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          statusMutation.mutate({ id, status: newStatus, policyId });
-        }
-      });
-    } else {
-      statusMutation.mutate({ id, status: newStatus, policyId });
-    }
+    const actionText = newStatus === "Approved" ? "approve" : "reject";
+    
+    Swal.fire({
+      title: `Confirm ${newStatus}?`,
+      text: `Once you ${actionText} this, you cannot change it again!`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: newStatus === "Approved" ? "#10B981" : "#EF4444",
+      confirmButtonText: `Yes, ${newStatus}!`,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        statusMutation.mutate({ id, status: newStatus, policyId });
+      } else {
+        // যদি ইউজার ক্যান্সেল করে, তবে রি-রেন্ডার করে ড্রপডাউন আগের অবস্থায় আনা
+        queryClient.invalidateQueries(["agent-assignments"]);
+      }
+    });
   };
 
   if (isLoading)
     return (
-      <div className="flex justify-center p-10">
-        <span className="loading loading-spinner loading-lg"></span>
+      <div className="flex flex-col justify-center items-center h-64 space-y-4">
+        <span className="loading loading-spinner loading-lg text-[#00332c]"></span>
+        <p className="text-gray-500 font-medium animate-pulse">Fetching assignments...</p>
       </div>
     );
 
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-6 text-[#00332c]">
-        Assigned Customers
-      </h2>
+    <div className="p-6 space-y-6">
+      <div className="flex flex-col">
+        <h2 className="text-3xl font-black text-[#00332c]">Assigned Customers</h2>
+        <p className="text-gray-500 text-sm">Review and finalize policy applications assigned to you.</p>
+      </div>
 
-      <div className="overflow-x-auto bg-white rounded-2xl shadow-xl border border-gray-100">
+      <div className="overflow-x-auto bg-white rounded-3xl shadow-sm border border-gray-100">
         <table className="table w-full">
-          <thead className="bg-[#00332c] text-white">
+          <thead className="bg-gray-50 text-gray-500 uppercase text-[11px] font-bold tracking-wider">
             <tr>
-              <th>Customer Info</th>
-              <th>Policy</th>
-              <th>Status</th>
-              <th>Action</th>
-              <th>Details</th>
+              <th className="py-5 px-6">Customer Info</th>
+              <th>Policy Name</th>
+              <th>Decision</th>
+              <th>Current Status</th>
+              <th className="text-center">Details</th>
             </tr>
           </thead>
           <tbody>
-            {assignments.map((item) => (
-              <tr key={item._id} className="hover:bg-gray-50 transition-colors">
-                <td>
-                  <div className="font-bold text-gray-800">
-                    {item.applicantName}
-                  </div>
-                  <div className="text-xs text-gray-500">
-                    {item.applicantEmail}
-                  </div>
-                </td>
-                <td className="font-medium text-blue-700">
-                  {item.policyTitle}
-                </td>
-                <td>
-                  <select
-                    className={`select select-sm select-bordered font-semibold ${
-                      item.status === "Approved"
-                        ? "text-green-600"
-                        : "text-orange-500"
-                    }`}
-                    defaultValue={item.status}
-                    onChange={(e) =>
-                      handleStatusChange(
-                        item._id,
-                        e.target.value,
-                        item.policyId,
-                      )
-                    }
-                  >
-                    <option value="Paid">Paid (Pending)</option>
-                    <option value="Approved">Approve</option>
-                    <option value="Rejected">Reject</option>
-                  </select>
-                </td>
-                <td>
-                  <span
-                    className={`badge badge-sm font-bold ${
-                      item.status === "Approved"
-                        ? "badge-success"
-                        : "badge-ghost"
-                    }`}
-                  >
-                    {item.status}
-                  </span>
-                </td>
-                <td>
-                  <button
-                    onClick={() => {
-                      setSelectedCustomer(item);
-                      document.getElementById("details_modal").showModal();
-                    }}
-                    className="btn btn-circle btn-ghost btn-sm text-blue-600 border border-blue-100 hover:bg-blue-50"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth={1.5}
-                      stroke="currentColor"
-                      className="w-5 h-5"
+            {assignments.map((item) => {
+              const isFinalized = item.status === "Approved" || item.status === "Rejected";
+              
+              return (
+                <tr key={item._id} className="hover:bg-gray-50/50 border-b last:border-0 transition-colors">
+                  <td className="py-4 px-6">
+                    <div className="font-bold text-[#00332c]">{item.applicantName}</div>
+                    <div className="text-[11px] opacity-60 font-medium tracking-tight">{item.applicantEmail}</div>
+                  </td>
+                  <td className="font-semibold text-blue-600 text-xs">
+                    {item.policyTitle}
+                  </td>
+                  <td>
+                    <select
+                      className={`select select-xs select-bordered rounded-lg font-bold transition-all ${
+                        item.status === "Approved" ? "bg-green-50 text-green-700 border-green-200" :
+                        item.status === "Rejected" ? "bg-red-50 text-red-700 border-red-200" :
+                        "bg-orange-50 text-orange-700 border-orange-200"
+                      }`}
+                      defaultValue={item.status}
+                      disabled={isFinalized}
+                      onChange={(e) => handleStatusChange(item._id, e.target.value, item.policyId)}
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z"
-                      />
-                    </svg>
-                  </button>
-                </td>
-              </tr>
-            ))}
+                      <option value="Paid" disabled={isFinalized}>Reviewing</option>
+                      <option value="Approved">Approve</option>
+                      <option value="Rejected">Reject</option>
+                    </select>
+                  </td>
+                  <td>
+                    <div className={`badge badge-sm font-black p-3 border-none gap-1 ${
+                      item.status === "Approved" ? "bg-emerald-100 text-emerald-700" :
+                      item.status === "Rejected" ? "bg-red-100 text-red-700" :
+                      "bg-orange-100 text-orange-700"
+                    }`}>
+                      {item.status === "Approved" && <CheckCircle size={12} />}
+                      {item.status === "Rejected" && <XCircle size={12} />}
+                      {item.status === "Paid" && <Clock size={12} />}
+                      {item.status}
+                    </div>
+                  </td>
+                  <td className="text-center">
+                    <button
+                      onClick={() => {
+                        setSelectedCustomer(item);
+                        document.getElementById("details_modal").showModal();
+                      }}
+                      className="btn btn-square btn-ghost btn-sm text-blue-500 hover:bg-blue-50"
+                    >
+                      <Info size={18} />
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
 
-      {/* View Details Modal */}
+      {/* --- Details Modal --- */}
       <dialog id="details_modal" className="modal modal-bottom sm:modal-middle">
-        <div className="modal-box bg-white">
-          <h3 className="font-bold text-xl text-[#00332c] border-b pb-2 mb-4">
-            Customer Application Details
-          </h3>
-          {selectedCustomer && (
-            <div className="space-y-3 text-gray-700">
-              <p>
-                <strong>NID:</strong> {selectedCustomer.nid}
-              </p>
-              <p>
-                <strong>Address:</strong> {selectedCustomer.address}
-              </p>
-              <p>
-                <strong>Nominee:</strong> {selectedCustomer.nomineeName} (
-                {selectedCustomer.relation})
-              </p>
-              <p>
-                <strong>Coverage Amount:</strong> ৳
-                {selectedCustomer.coverageAmount?.toLocaleString("en-BD")}
-              </p>
-              <p>
-                <strong>Monthly Premium:</strong> ৳{selectedCustomer.amount}
-              </p>
-              <div className="bg-gray-100 p-3 rounded-lg mt-4">
-                <p className="text-sm font-bold">Transaction ID:</p>
-                <p className="text-xs font-mono break-all text-blue-600">
-                  {selectedCustomer.transactionId}
-                </p>
+        <div className="modal-box p-0 bg-white rounded-3xl overflow-hidden shadow-2xl">
+          <div className="bg-[#00332c] p-6 text-white">
+            <h3 className="font-black text-xl">Customer Profile</h3>
+            <p className="text-xs opacity-70">Application ID: {selectedCustomer?._id}</p>
+          </div>
+          
+          <div className="p-8 grid grid-cols-1 gap-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-gray-50 p-3 rounded-xl">
+                <p className="text-[10px] font-black text-gray-400 uppercase">NID Number</p>
+                <p className="text-sm font-bold text-[#00332c]">{selectedCustomer?.nid}</p>
+              </div>
+              <div className="bg-gray-50 p-3 rounded-xl">
+                <p className="text-[10px] font-black text-gray-400 uppercase">Nominee</p>
+                <p className="text-sm font-bold text-[#00332c]">{selectedCustomer?.nomineeName}</p>
               </div>
             </div>
-          )}
-          <div className="modal-action">
-            <form method="dialog">
-              <button className="btn bg-[#00332c] text-white hover:bg-black border-none px-8">
-                Close
-              </button>
-            </form>
+
+            <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
+              <p className="text-[10px] font-black text-gray-400 uppercase mb-1">Permanent Address</p>
+              <p className="text-sm text-gray-600 leading-relaxed font-medium">{selectedCustomer?.address}</p>
+            </div>
+
+            <div className="flex justify-between items-center bg-blue-50 p-4 rounded-xl border border-blue-100">
+              <div>
+                <p className="text-[10px] font-black text-blue-600 uppercase">Monthly Premium</p>
+                <p className="text-lg font-black text-blue-900">৳{selectedCustomer?.amount}</p>
+              </div>
+              <div className="text-right">
+                <p className="text-[10px] font-black text-blue-600 uppercase">Coverage</p>
+                <p className="text-sm font-bold text-blue-900">৳{selectedCustomer?.coverageAmount?.toLocaleString("en-BD")}</p>
+              </div>
+            </div>
+
+            <div className="modal-action mt-4">
+              <form method="dialog" className="w-full">
+                <button className="btn w-full bg-[#00332c] text-white border-none rounded-xl hover:bg-black">
+                  Finished Review
+                </button>
+              </form>
+            </div>
           </div>
         </div>
       </dialog>

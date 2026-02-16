@@ -22,7 +22,6 @@ import ManageApplications from "../Pages/Admin/ManageApplications/ManageApplicat
 import ManageUsers from "../Pages/Admin/ManageUsers/ManageUsers";
 import ManagePolicies from "../Pages/Admin/ManagePolicies/ManagePolicies";
 import Transactions from "../Pages/Admin/Transactions/Transactions";
-import AllBlogs from "../Pages/Admin/AllBlogs/AllBlogs";
 import useRole from "../Hooks/useRole"; 
 import AssignedCustomers from "../Pages/Agent/Assigned Customers/AssignedCustomers";
 import MyBlogs from "../Pages/Agent/My Blogs/MyBlogs";
@@ -106,8 +105,7 @@ const Router = createBrowserRouter([
       { path: "manage-users", element: <AdminRoute><ManageUsers /></AdminRoute>  },
       { path: "manage-policies", element:  <AdminRoute><ManagePolicies /></AdminRoute> },
       { path: "manage-transactions", element: <AdminRoute><Transactions /> </AdminRoute>},
-      { path: "manage-blogs", element: <AdminRoute><AllBlogs /></AdminRoute> },
-
+      
       // --- Agent Routes ---
       {path:"assigned-customers" ,element:<AgentRoute><AssignedCustomers></AssignedCustomers></AgentRoute>},
       {path:"agent-blogs" ,element: <AgentRoute><MyBlogs></MyBlogs></AgentRoute>},
