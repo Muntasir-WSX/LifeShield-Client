@@ -1,79 +1,106 @@
 import React, { useState, useEffect } from 'react';
-import { FileText, Send, AlertCircle, CheckCircle, Clock } from 'lucide-react';
-import Swal from 'sweetalert2'; // মেসেজ দেখানোর জন্য
+import { Send, CheckCircle, Clock } from 'lucide-react';
+import Swal from 'sweetalert2';
+import useAxiosSecure from '../../../Hooks/UseAxiosSecure';
+import useAuth from '../../../Hooks/useAuth';
+
 
 const ClaimRequest = () => {
+    const { user } = useAuth();
+    const axiosSecure = useAxiosSecure();
     const [policies, setPolicies] = useState([]);
     const [selectedPolicy, setSelectedPolicy] = useState(null);
     const [loading, setLoading] = useState(false);
 
-    // ১. ডাটা ফেচিং (ব্যাকএন্ড থেকে শুধু Approved পলিসিগুলো আনবেন)
+   
     useEffect(() => {
-        // fetch('/api/my-approved-policies')
-        // .then(res => res.json())
-        // .then(data => setPolicies(data))
-        
-        // ডামি ডাটা (টেস্ট করার জন্য)
-        setPolicies([
-            { _id: '1', policyName: 'Life Security Gold', status: 'approved', isClaimed: false },
-            { _id: '2', policyName: 'Health Shield Plus', status: 'approved', isClaimed: true, claimStatus: 'pending' },
-            { _id: '3', policyName: 'Term Plan 2026', status: 'approved', isClaimed: true, claimStatus: 'approved' }
-        ]);
-    }, []);
+        if (user?.email) {
+            axiosSecure.get(`/my-approved-policies/${user.email}`)
+                .then(res => setPolicies(res.data))
+                .catch(err => console.error(err));
+        }
+    }, [user?.email, axiosSecure]);
 
-    // ২. ক্লেইম সাবমিট হ্যান্ডলার
+ 
     const handleClaimSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         
         const form = e.target;
         const reason = form.reason.value;
-        const document = form.document.files[0];
+        const document = form.document.value; // ইমেজ হোস্টিং করে লিংক দিলে ভালো, আপাতত ডামি হিসেবে ধরছি
 
-        // এখানে আপনার FormData তৈরি করে API কল করবেন
-        console.log({ policyId: selectedPolicy._id, reason, document });
+        const claimData = {
+            claimStatus: "Pending", // ডিমান্ড অনুযায়ী স্ট্যাটাস Pending হবে
+            claimReason: reason,
+            claimDocument: document 
+        };
 
-        // সফল হলে মেসেজ
-        setTimeout(() => {
-            Swal.fire("Success", "Claim request submitted as Pending", "success");
-            setSelectedPolicy(null); // ফর্ম বন্ধ করার জন্য
+        try {
+            const res = await axiosSecure.patch(`/applications/claim/${selectedPolicy._id}`, claimData);
+            if (res.data.modifiedCount > 0) {
+                Swal.fire("Success", "Claim request submitted as Pending", "success");
+                
+                // লোকাল স্টেট আপডেট যাতে রিলোড ছাড়া চেঞ্জ দেখা যায়
+                setPolicies(prev => prev.map(p => 
+                    p._id === selectedPolicy._id ? { ...p, claimStatus: "Pending" } : p
+                ));
+                setSelectedPolicy(null);
+            }
+        } catch (error) {
+            Swal.fire("Error", "Something went wrong", "error");
+        } finally {
             setLoading(false);
-        }, 1500);
+        }
     };
 
+    // ৩. ঐচ্ছিক টাস্ক: Approved হলে এলার্ট দেখানো
+    const showApprovedAlert = (policy) => {
+        Swal.fire({
+            title: 'Claim Approved!',
+            text: `Your claim for ${policy.policyName} has been settled.`,
+            icon: 'success',
+            confirmButtonColor: '#00332c'
+        });
+    }
+
     return (
-        <div className="space-y-6">
+        <div className="p-4 space-y-6">
             <div className="mb-6">
                 <h3 className="text-xl font-bold text-[#00332c]">Claim Requests</h3>
                 <p className="text-sm text-gray-500">Submit a claim for your active policies</p>
             </div>
 
-            {/* পলিসি টেবিল */}
-            <div className="overflow-x-auto">
-                <table className="table w-full border-collapse">
-                    <thead className="bg-gray-50">
-                        <tr className="text-[#00332c] border-b">
-                            <th className="p-4 text-left">Policy Name</th>
-                            <th className="p-4 text-left">Claim Status</th>
-                            <th className="p-4 text-center">Action</th>
+            <div className="overflow-x-auto bg-white rounded-lg shadow">
+                <table className="table w-full">
+                    <thead>
+                        <tr className="bg-gray-50 text-[#00332c]">
+                            <th>Policy Name</th>
+                            <th>Claim Status</th>
+                            <th className="text-center">Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         {policies.map((policy) => (
-                            <tr key={policy._id} className="border-b hover:bg-gray-50">
-                                <td className="p-4 font-medium">{policy.policyName}</td>
-                                <td className="p-4">
-                                    {!policy.isClaimed ? (
+                            <tr key={policy._id} className="hover:bg-gray-50">
+                                <td className="font-medium">{policy.policyName}</td>
+                                <td>
+                                    {!policy.claimStatus ? (
                                         <span className="text-gray-400 italic">No Claim Yet</span>
                                     ) : (
                                         <div className="flex items-center gap-1">
-                                            {policy.claimStatus === 'pending' && <span className="badge badge-warning gap-1 p-3"><Clock size={14}/> Pending</span>}
-                                            {policy.claimStatus === 'approved' && <span className="badge badge-success text-white gap-1 p-3"><CheckCircle size={14}/> Approved</span>}
+                                            {policy.claimStatus === 'Pending' && 
+                                                <span className="badge badge-warning gap-1 py-3"><Clock size={14}/> Pending</span>}
+                                            {policy.claimStatus === 'Approved' && 
+                                                <button onClick={() => showApprovedAlert(policy)} className="badge badge-success text-white gap-1 py-3 cursor-pointer">
+                                                    <CheckCircle size={14}/> Approved
+                                                </button>}
                                         </div>
                                     )}
                                 </td>
-                                <td className="p-4 text-center">
-                                    {!policy.isClaimed ? (
+                                <td className="text-center">
+                                    {/* কন্ডিশনাল বাটন: যদি ক্লেইম না থাকে তবেই Claim Now দেখাবে */}
+                                    {!policy.claimStatus ? (
                                         <button 
                                             onClick={() => setSelectedPolicy(policy)}
                                             className="btn btn-sm bg-[#00332c] text-white hover:bg-black border-none"
@@ -81,7 +108,7 @@ const ClaimRequest = () => {
                                             Claim Now
                                         </button>
                                     ) : (
-                                        <button disabled className="btn btn-sm btn-ghost text-gray-400">Claimed</button>
+                                        <button disabled className="btn btn-sm btn-disabled">Already Claimed</button>
                                     )}
                                 </td>
                             </tr>
@@ -90,10 +117,10 @@ const ClaimRequest = () => {
                 </table>
             </div>
 
-            {/* ক্লেইম ফর্ম মোডাল (যদি পলিসি সিলেক্ট করা থাকে) */}
+            {/* Modal - Form logic remains similar to yours but with real dynamic interaction */}
             {selectedPolicy && (
                 <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-                    <div className="bg-white rounded-2xl p-8 max-w-lg w-full shadow-2xl animate-in fade-in zoom-in duration-200">
+                    <div className="bg-white rounded-2xl p-8 max-w-lg w-full shadow-2xl">
                         <div className="flex justify-between items-center mb-6">
                             <h4 className="text-xl font-bold text-[#00332c]">Submit Claim</h4>
                             <button onClick={() => setSelectedPolicy(null)} className="text-gray-400 hover:text-red-500 text-2xl">&times;</button>
@@ -102,40 +129,18 @@ const ClaimRequest = () => {
                         <form onSubmit={handleClaimSubmit} className="space-y-4">
                             <div>
                                 <label className="label text-sm font-semibold">Policy Name</label>
-                                <input 
-                                    type="text" 
-                                    readOnly 
-                                    value={selectedPolicy.policyName} 
-                                    className="input input-bordered w-full bg-gray-100 cursor-not-allowed"
-                                />
+                                <input type="text" readOnly value={selectedPolicy.policyName} className="input input-bordered w-full bg-gray-100" />
                             </div>
-
                             <div>
                                 <label className="label text-sm font-semibold">Reason for Claim</label>
-                                <textarea 
-                                    name="reason" 
-                                    required
-                                    placeholder="Briefly describe the reason..." 
-                                    className="textarea textarea-bordered w-full h-24 focus:outline-green-500"
-                                ></textarea>
+                                <textarea name="reason" required className="textarea textarea-bordered w-full h-24 focus:outline-green-500" placeholder="Why are you claiming?"></textarea>
                             </div>
-
                             <div>
-                                <label className="label text-sm font-semibold">Upload Supporting Document (PDF/Image)</label>
-                                <input 
-                                    type="file" 
-                                    name="document"
-                                    required
-                                    className="file-input file-input-bordered file-input-success w-full" 
-                                />
+                                <label className="label text-sm font-semibold">Supporting Document Link</label>
+                                <input type="text" name="document" placeholder="Document URL" required className="input input-bordered w-full" />
                             </div>
-
-                            <button 
-                                type="submit" 
-                                disabled={loading}
-                                className="btn w-full bg-green-500 hover:bg-green-600 text-white border-none mt-4"
-                            >
-                                {loading ? 'Submitting...' : <><Send size={18} /> Submit Claim</>}
+                            <button type="submit" disabled={loading} className="btn w-full bg-green-600 hover:bg-green-700 text-white border-none mt-4">
+                                {loading ? 'Submitting...' : 'Submit Claim'}
                             </button>
                         </form>
                     </div>

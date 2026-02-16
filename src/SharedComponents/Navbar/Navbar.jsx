@@ -4,9 +4,11 @@ import LifeShieldLogo from "../LifeShieldLogo/LifeShieldLogo";
 import toast from "react-hot-toast";
 import useAuth from "../../Hooks/useAuth";
 import { FaHome, FaUserCircle, FaSignOutAlt } from "react-icons/fa"; // নতুন আইকন যোগ করা হয়েছে
+import useRole from "../../Hooks/useRole";
 
 const Navbar = () => {
   const { user, logOut } = useAuth();
+  const [role] = useRole();
 
   const handleLogOut = () => {
     logOut()
@@ -20,28 +22,29 @@ const Navbar = () => {
     document.getElementById("my-drawer").checked = false;
   };
 
-  const navLinks = (
-    <>
-        
-      <li>
-        <NavLink to="/" onClick={closeDrawer} className={({ isActive }) => isActive ? "text-green-500 font-bold" : "hover:text-green-500 transition-colors"}> Home </NavLink>
-      </li>
-      <li>
-        <NavLink to="/policies" onClick={closeDrawer} className={({ isActive }) => isActive ? "text-green-500 font-bold" : "hover:text-green-500 transition-colors"}>All Policies</NavLink>
-      </li>
+ const navLinks = (
+  <>
+   <li>
+      <NavLink to="/" onClick={closeDrawer} className={({ isActive }) => isActive ? "text-green-500 font-bold" : "hover:text-green-500 transition-colors"}> Home </NavLink>
+    </li>
+    <li>
+      <NavLink to="/policies" onClick={closeDrawer} className={({ isActive }) => isActive ? "text-green-500 font-bold" : "hover:text-green-500 transition-colors"}>All Policies</NavLink>
+    </li>
+    {(role === "customer" || !role) && (
       <li>
         <NavLink to="/blogs" onClick={closeDrawer} className={({ isActive }) => isActive ? "text-green-500 font-bold" : "hover:text-green-500 transition-colors"}>Blogs</NavLink>
       </li>
+    )}
+    <li>
+      <NavLink to="/us" onClick={closeDrawer} className={({ isActive }) => isActive ? "text-green-500 font-bold" : "hover:text-green-500 transition-colors"}>About Us</NavLink>
+    </li>
+    {user && (
       <li>
         <NavLink to="/dashboard" onClick={closeDrawer} className={({ isActive }) => isActive ? "text-green-500 font-bold" : "hover:text-green-500 transition-colors"}>Dashboard</NavLink>
       </li>
-      <li>
-        <NavLink to="/us" onClick={closeDrawer} className={({ isActive }) => isActive ? "text-green-500 font-bold" : "hover:text-green-500 transition-colors"}>About Us</NavLink>
-      </li>
-
-    </>
-  );
-
+    )}
+  </>
+);
   return (
     <nav className="w-full sticky top-0 z-50 bg-white shadow-sm">
       {/* Top Header */}

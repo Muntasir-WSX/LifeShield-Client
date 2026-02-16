@@ -33,90 +33,89 @@ import AgentRoute from "../Routes/AgentRoutes";
 
 
 const DashboardIndex = () => {
-  const [role, isLoading] = useRole(); 
+    const [role, isLoading] = useRole(); 
 
-  if (isLoading) return Loading;
+    if (isLoading) return <Loading />; 
 
-
-  if (role === "admin") {
-    return <Navigate to="/dashboard/manage-applications" replace />;
-  }
-  if (role === "agent") return <Navigate to="/dashboard/assigned-customers" replace />;
-  
-  return <Navigate to="/dashboard/my-policies" replace />;
+    if (role === "admin") {
+        return <Navigate to="/dashboard/manage-applications" replace />;
+    }
+    if (role === "agent") {
+        return <Navigate to="/dashboard/assigned-customers" replace />;
+    }
+    
+    return <Navigate to="/dashboard/my-policies" replace />;
 };
 
 const Router = createBrowserRouter([
-  {
-    path: "/",
-    element: <MainLayouts />,
-    children: [
-      { index: true, element: <Home /> },
-      { path: "policies", element: <AllPolicies /> },
-      {
-        path: "policy/:id",
+    {
+        path: "/",
+        element: <MainLayouts />,
+        children: [
+            { index: true, element: <Home /> },
+            { path: "policies", element: <AllPolicies /> },
+            {
+                path: "policy/:id",
+                element: (
+                    <PrivateRoutes> 
+                        <AllPoliciesDetails />
+                    </PrivateRoutes>
+                ),
+            },
+            { path: "blogs", element: <Blogs /> },
+            { path: "quote", element: <PrivateRoutes><QuotePage /> </PrivateRoutes> },
+            { path: "quote/:id", element: <PrivateRoutes><QuotePage /> </PrivateRoutes> },
+            {
+                path: "apply",
+                element: (
+                    <PrivateRoutes>
+                        <QuoteApplicationFrom />
+                    </PrivateRoutes>
+                ),
+            },
+            { path: "us", element: <AboutUs /> },
+            { path: "blog-details/:id", element: <ArticleDetails /> },
+            {
+                path: "profile",
+                element: (
+                    <PrivateRoutes>
+                        <Profile />
+                    </PrivateRoutes>
+                ),
+            },
+        ],
+    },
+    {
+        path: "dashboard",
         element: (
-          <PrivateRoutes> 
-            <AllPoliciesDetails />
-          </PrivateRoutes>
+            <PrivateRoutes>
+                <DashboardLayout />
+            </PrivateRoutes>
         ),
-      },
-      { path: "blogs", element: <Blogs /> },
-      { path: "quote", element: <PrivateRoutes><QuotePage /> </PrivateRoutes> },
-      { path: "quote/:id", element: <PrivateRoutes><QuotePage /> </PrivateRoutes> },
-      {
-        path: "apply",
-        element: (
-          <PrivateRoutes>
-            <QuoteApplicationFrom />
-          </PrivateRoutes>
-        ),
-      },
-      { path: "us", element: <AboutUs /> },
-      { path: "blog-details/:id", element: <ArticleDetails /> },
-      {
-        path: "profile",
-        element: (
-          <PrivateRoutes>
-            <Profile />
-          </PrivateRoutes>
-        ),
-      },
-    ],
-  },
-  {
-    path: "dashboard",
-    element: (
-      <PrivateRoutes>
-        <DashboardLayout />
-      </PrivateRoutes>
-    ),
-    children: [
-      
-      { index: true, element: <DashboardIndex /> },
-      
-      // --- Customer Routes ---
-      { path: "my-policies", element: <MyPolicies /> },
-      { path: "payment/:id", element: <PaymentPage /> },
-      { path: "payment-status", element: <PaymentStatus /> },
-      { path: "claim-request", element: <ClaimRequest /> },
+        children: [
+            { index: true, element: <DashboardIndex /> },
+            
+            // --- Customer Routes ---
+            { path: "my-policies", element: <MyPolicies /> },
+            { path: "payment/:id", element: <PaymentPage /> },
+            { path: "payment-status", element: <PaymentStatus /> },
+            { path: "claim-request", element: <ClaimRequest /> },
 
-      // --- Admin Routes ---
-      { path: "manage-applications", element: <AdminRoute><ManageApplications /></AdminRoute>  },
-      { path: "manage-users", element: <AdminRoute><ManageUsers /></AdminRoute>  },
-      { path: "manage-policies", element:  <AdminRoute><ManagePolicies /></AdminRoute> },
-      { path: "manage-transactions", element: <AdminRoute><Transactions /> </AdminRoute>},
-      { path: "manage-blogs", element: <AdminRoute><AllBlogs /></AdminRoute> },
+            // --- Admin Routes ---
+            { path: "manage-applications", element: <AdminRoute><ManageApplications /></AdminRoute> },
+            { path: "manage-users", element: <AdminRoute><ManageUsers /></AdminRoute> },
+            { path: "manage-policies", element: <AdminRoute><ManagePolicies /></AdminRoute> },
+            { path: "manage-transactions", element: <AdminRoute><Transactions /> </AdminRoute>},
+            { path: "manage-blogs", element: <AdminRoute><AllBlogs /></AdminRoute> },
 
-      // --- Agent Routes ---
-      {path:"assigned-customers" ,element:<AgentRoute><AssignedCustomers></AssignedCustomers></AgentRoute>},
-      {path:"agent-blogs" ,element: <AgentRoute><MyBlogs></MyBlogs></AgentRoute>},
-      {path:"policy-clearance" ,element: <AgentRoute><PolicyClearance></PolicyClearance></AgentRoute>},
-
-    ],
-  },
-  { path: "signIn", element: <SignIn /> },
-  { path: "register", element: <Register /> },
+            // --- Agent Routes ---
+            { path: "assigned-customers", element: <AgentRoute><AssignedCustomers /></AgentRoute> },
+            { path: "agent-blogs", element: <AgentRoute><MyBlogs /></AgentRoute> },
+            { path: "policy-clearance", element: <AgentRoute><PolicyClearance /></AgentRoute> },
+        ],
+    },
+    { path: "signIn", element: <SignIn /> },
+    { path: "register", element: <Register /> },
 ]);
 
 export default Router;
