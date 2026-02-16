@@ -131,7 +131,7 @@ const ManageApplications = () => {
                     <div className="flex flex-col">
                       <span className="text-[10px] font-bold text-blue-600">Assigned Agent</span>
                       <span className="text-xs text-gray-700 font-bold">{app.agentName}</span>
-      <span className="text-[9px] text-gray-400">{app.agentEmail}</span>
+                      <span className="text-[9px] text-gray-400">{app.agentEmail}</span>
                     </div>
                   ) : app.status === "Awaiting Approval" ? (
                     <div className="flex items-center gap-1 text-orange-600 font-bold text-xs animate-pulse">
