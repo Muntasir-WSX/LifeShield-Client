@@ -4,6 +4,7 @@ import { Edit, Trash2, Plus, BookOpen, Calendar, Loader2, ArrowRight } from 'luc
 import Swal from 'sweetalert2';
 import useAxiosSecure from '../../../Hooks/UseAxiosSecure';
 import useAuth from '../../../Hooks/useAuth';
+import Loading from '../../../SharedComponents/Loading/Loading';
 
 const MyBlogs = () => {
     const { user } = useAuth();
@@ -112,12 +113,12 @@ const MyBlogs = () => {
         document.getElementById('blog_modal').close();
     };
 
-    if (isLoading) return <div className="flex justify-center p-20"><Loader2 className="animate-spin" /></div>;
+    if (isLoading) return <Loading></Loading>
 
     return (
         <div className="p-6">
             {uploading && (
-                <div className="fixed inset-0 z-[9999] bg-white/60 backdrop-blur-sm flex flex-col items-center justify-center">
+                <div className="fixed inset-0 z-9999 bg-white/60 backdrop-blur-sm flex flex-col items-center justify-center">
                     <Loader2 className="animate-spin text-[#00332c]" size={50} />
                     <p className="font-black">PROCESSING...</p>
                 </div>
@@ -169,7 +170,7 @@ const MyBlogs = () => {
 
             {/* Modal for Add/Edit */}
             <dialog id="blog_modal" className="modal">
-                <div className="modal-box max-w-2xl rounded-[2rem]">
+                <div className="modal-box max-w-2xl rounded-4xl">
                     <h3 className="font-black text-2xl mb-4">{selectedBlog ? 'Edit Blog' : 'New Blog'}</h3>
                     <form id="blog_form" onSubmit={handleSubmit} className="space-y-4">
                         <input name="image" type="file" className="file-input w-full" required={!selectedBlog} />
