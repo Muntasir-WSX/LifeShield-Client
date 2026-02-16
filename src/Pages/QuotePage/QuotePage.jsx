@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import useAxiosPublic from '../../Hooks/UseAxiosPublic';
 import { FaCalculator, FaInfoCircle } from 'react-icons/fa';
+import Loading from '../../SharedComponents/Loading/Loading';
 
 const QuotePage = () => {
     const { id } = useParams();
@@ -12,7 +13,7 @@ const QuotePage = () => {
     const [age, setAge] = useState(25);
     const [gender, setGender] = useState('male');
     const [isSmoker, setIsSmoker] = useState(false);
-    const [coverage, setCoverage] = useState(1000000); // Default 10 Lakh
+    const [coverage, setCoverage] = useState(1000000); 
     const [premium, setPremium] = useState(0);
 
     const { data: allPolicies = [], isLoading } = useQuery({
@@ -34,13 +35,11 @@ const QuotePage = () => {
         if (!selectedPolicy) return;
 
         // --- Professional Calculation Logic ---
-        let baseRate = selectedPolicy.base_rate || 0.5; // Default 0.5% if not found
+        let baseRate = selectedPolicy.base_rate || 0.5; 
         let basePrice = (coverage * baseRate) / 100;
-      
-        // Age Factor: ১৮ বছরের পর প্রতি বছর ২% ঝুঁকি বৃদ্ধি
         const ageFactor = 1 + (Math.max(0, age - 18) * 0.025); 
-        const genderFactor = gender === 'female' ? 0.90 : 1.0; // নারীদের জন্য ১০% ছাড়
-        const smokerFactor = isSmoker ? 1.35 : 1.0; // ধূমপায়ীদের জন্য ৩৫% ঝুঁকি বেশি
+        const genderFactor = gender === 'female' ? 0.90 : 1.0; 
+        const smokerFactor = isSmoker ? 1.35 : 1.0; 
 
         const yearlyPremium = basePrice * ageFactor * genderFactor * smokerFactor;
         const monthlyPremium = yearlyPremium / 12;
@@ -48,7 +47,7 @@ const QuotePage = () => {
         setPremium(Math.round(monthlyPremium));
     }, [age, gender, isSmoker, coverage, selectedPolicy]);
 
-    if (isLoading) return <div className="h-screen flex justify-center items-center"><span className="loading loading-bars loading-lg text-green-600"></span></div>;
+    if (isLoading) return <Loading></Loading>;
 
     return (
         <div className="min-h-screen bg-[#f8fafc] py-12 px-4">

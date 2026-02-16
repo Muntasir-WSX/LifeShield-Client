@@ -4,9 +4,7 @@ import useAuth from '../../../Hooks/useAuth';
 import useAxiosSecure from '../../../Hooks/UseAxiosSecure';
 import Loading from '../../../SharedComponents/Loading/Loading';
 import { useNavigate } from 'react-router-dom';
-import Mastercard from "../../../assets/mastercard.png";
-import stripeImage from "../../../assets/stripe.png";
-import visa from "../../../assets/visa.jpg";
+import { AlertCircle, Lock } from 'lucide-react';
 
 const CheckoutForm = ({ amount, appId }) => {
     const [error, setError] = useState('');
@@ -23,16 +21,14 @@ const CheckoutForm = ({ amount, appId }) => {
         const fetchAppData = async () => {
             try {
                 const res = await axiosSecure.get(`/application/${appId}`); 
-            setApplicationData(res.data);
-        } catch (err) {
-            console.error("Fetch App Error:", err);
-           
-        };
+                setApplicationData(res.data);
+            } catch (err) {
+                console.error("Fetch App Error:", err);
+            };
         };
         if (appId) fetchAppData();
     }, [appId, axiosSecure]);
 
-    // Stripe Client Secret তৈরি
     useEffect(() => {
         if (amount > 0) {
             axiosSecure.post('/create-payment-intent', { price: parseFloat(amount) })
@@ -45,7 +41,7 @@ const CheckoutForm = ({ amount, appId }) => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        if (!stripe || !elements || !clientSecret) return;
+        if (!stripe || !elements || !clientSecret || processing) return;
 
         const card = elements.getElement(CardElement);
         if (card === null) return;
@@ -68,14 +64,13 @@ const CheckoutForm = ({ amount, appId }) => {
             setProcessing(false);
         } else {
             if (paymentIntent.status === "succeeded") {
-               
                 const paymentInfo = {
                     transactionId: paymentIntent.id,
                     email: user?.email,
                     amount: amount,
                     appId: appId,
                     date: new Date(),
-                    status: 'Pending', 
+                    status: 'Awaiting Approval', // আপনার আগের লজিক অনুযায়ী
                     paymentStatus: 'Paid', 
                     agentEmail: applicationData?.agentEmail || '', 
                     agentName: applicationData?.agentName || '',
@@ -97,59 +92,84 @@ const CheckoutForm = ({ amount, appId }) => {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="w-full max-w-lg mx-auto space-y-6">
-            <div className="space-y-2">
-                <label className="text-sm font-bold text-gray-600 ml-1">Card Details</label>
-                <div className="p-4 bg-gray-50 rounded-2xl border-2 border-transparent focus-within:border-[#00332c] focus-within:bg-white transition-all duration-300 shadow-inner min-h-[60px]">
-                    <CardElement
-                        options={{
-                            style: {
-                                base: {
-                                    fontSize: '17px', 
-                                    color: '#00332c',
-                                    fontFamily: 'Inter, sans-serif',
-                                    '::placeholder': { color: '#94a3b8' },
-                                },
-                                invalid: { color: '#ef4444' },
-                            },
-                            hidePostalCode: true, 
-                        }}
-                    />
+        <div className="w-full max-w-md mx-auto font-urbanist">
+            <div className="bg-[#00332c] rounded-[40px] overflow-hidden shadow-2xl border border-white/5">
+                
+                {/* --- Header & Amount Area --- */}
+                <div className="p-8 pb-10">
+                    <div className="flex justify-between items-center mb-6">
+                        <span className="bg-white/10 text-white/80 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest flex items-center gap-2">
+                            <Lock size={12}/> Secure Payment
+                        </span>
+                    </div>
+                    <div className="space-y-1">
+                        <p className="text-gray-300 text-xs font-bold uppercase tracking-widest opacity-60">Amount to Pay</p>
+                        <h2 className="text-white text-5xl font-black">৳{amount.toLocaleString('en-BD')}</h2>
+                    </div>
+                </div>
+
+                {/* --- Form Section --- */}
+                <div className="bg-white m-2 rounded-[32px] p-6 md:p-8">
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                        <div>
+                            <label className="block text-[#00332c] text-[10px] font-black uppercase mb-3 tracking-widest opacity-50">
+                                Card Credentials
+                            </label>
+                            <div className="p-4 border-2 border-gray-100 rounded-2xl bg-gray-50 focus-within:border-[#00332c]/20 focus-within:bg-white transition-all duration-300">
+                                <CardElement
+                                    options={{
+                                        style: {
+                                            base: {
+                                                fontSize: '16px',
+                                                color: '#00332c',
+                                                fontFamily: 'Inter, sans-serif',
+                                                '::placeholder': { color: '#94a3b8' },
+                                            },
+                                            invalid: { color: '#ef4444' },
+                                        },
+                                        hidePostalCode: true,
+                                    }}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="space-y-4">
+                            <button
+                                type="submit"
+                                disabled={!stripe || !clientSecret || processing}
+                                className="w-full bg-[#00332c] text-white font-black py-5 rounded-2xl uppercase tracking-[0.2em] text-xs shadow-xl active:scale-[0.98] transition-all disabled:opacity-30 flex items-center justify-center gap-3 overflow-hidden"
+                            >
+                                {processing ? (
+                                    <div className="flex items-center gap-2">
+                                        <Loading size="sm" /> <span>Verifying...</span>
+                                    </div>
+                                ) : (
+                                    <span>Confirm Payment</span>
+                                )}
+                            </button>
+                            
+                            {error && (
+                                <div className="flex items-center gap-2 text-red-500 bg-red-50 p-3 rounded-xl border-l-4 border-red-500 animate-shake">
+                                    <AlertCircle size={16} />
+                                    <p className="text-[10px] font-bold uppercase tracking-tight">{error}</p>
+                                </div>
+                            )}
+                        </div>
+                    </form>
+                    
+                    {/* --- Trust Badges --- */}
+                    <div className="mt-8 flex justify-center gap-6 opacity-20 grayscale pointer-events-none">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" className="h-3" alt="visa" />
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" className="h-5" alt="mastercard" />
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg" className="h-4" alt="stripe" />
+                    </div>
                 </div>
             </div>
             
-            {error && (
-                <div className="bg-red-50 text-red-600 p-4 rounded-xl text-sm font-medium border border-red-100">
-                     {error}
-                </div>
-            )}
-
-            <button
-                type="submit"
-                disabled={!stripe || !clientSecret || processing}
-                className={`w-full h-14 rounded-2xl text-white text-lg font-black transition-all duration-300 active:scale-95 shadow-lg flex items-center justify-center gap-3 ${
-                    processing ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#00332c] hover:bg-black'
-                }`}
-            >
-                {processing ? (
-                    <div className="flex items-center gap-2 text-white">
-                         <Loading /> <span>Processing Payment...</span>
-                    </div>
-                ) : (
-                    <>
-                        <span>Authorize Payment</span>
-                        <span className="opacity-40">|</span>
-                        <span>৳{amount.toLocaleString('en-BD')}</span>
-                    </>
-                )}
-            </button>
-
-            <div className="flex items-center justify-center gap-4 pt-2">
-                <img src={Mastercard} className="h-6 opacity-40" alt="Mastercard" />
-                <img src={visa} className="h-6 opacity-40" alt="Visa" />
-                <img src={stripeImage} className="h-6 opacity-40" alt="Stripe" />
-            </div>
-        </form>
+            <p className="text-center mt-6 text-gray-400 text-[9px] font-black uppercase tracking-[0.3em]">
+                256-bit SSL Encrypted Connection
+            </p>
+        </div>
     );
 };
 
