@@ -60,13 +60,13 @@ const Navbar = () => {
           <div className="drawer lg:hidden w-auto">
             <input id="my-drawer" type="checkbox" className="drawer-toggle peer" />
             <div className="drawer-content flex items-center">
-              <label htmlFor="my-drawer" className="relative w-10 h-10 flex items-center justify-center cursor-pointer group z-[110]">
+              <label htmlFor="my-drawer" className="relative w-10 h-10 flex items-center justify-center cursor-pointer group z-110">
                 <span className="absolute w-6 h-1 bg-[#00332c] rounded-full transition-all duration-500"></span>
                 <span className="absolute h-6 w-1 bg-[#00332c] rounded-full transition-all duration-500"></span>
               </label>
             </div>
             
-            <div className="drawer-side z-[100]">
+            <div className="drawer-side z-100">
               <label htmlFor="my-drawer" className="drawer-overlay"></label>
               <div className="menu p-6 w-80 min-h-full bg-white text-base-content flex flex-col justify-between">
                 <div>
@@ -117,7 +117,7 @@ const Navbar = () => {
                   <img src={user?.photoURL || "https://i.ibb.co.com/8mX1C9T/user.png"} alt="User" />
                 </div>
               </div>
-              <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow-xl bg-white rounded-box w-56 mt-4 border border-gray-100 font-bold text-[#00332c]">
+              <ul tabIndex={0} className="dropdown-content z-1 menu p-2 shadow-xl bg-white rounded-box w-56 mt-4 border border-gray-100 font-bold text-[#00332c]">
                 <li className="px-4 py-2 text-xs text-gray-400 uppercase border-b mb-2">My Account</li>
                 <li>
                     <Link to="/profile" className="flex items-center gap-2 hover:text-green-600">

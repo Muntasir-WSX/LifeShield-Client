@@ -137,8 +137,6 @@ const MyPolicies = () => {
                       >
                         <Info size={14} /> Details
                       </button>
-
-                      {/* Review Button: শুধু Assigned হওয়ার পর আসবে */}
                       {policy.status === "Assigned" && (
                         <button
                           onClick={() => {
@@ -163,7 +161,7 @@ const MyPolicies = () => {
 
       {/* Review Modal */}
       <dialog id="review-modal" className="modal modal-bottom sm:modal-middle">
-        <div className="modal-box bg-white rounded-[2rem] p-6 shadow-2xl">
+        <div className="modal-box bg-white rounded-4xl p-6 shadow-2xl">
           <div className="flex items-center gap-4 mb-6">
             <div className="p-3 bg-yellow-50 text-yellow-600 rounded-2xl border border-yellow-100">
               <MessageSquare size={24} />
@@ -203,7 +201,7 @@ const MyPolicies = () => {
 
       {/* Details Modal */}
       <dialog id="details-modal" className="modal modal-bottom sm:modal-middle">
-        <div className="modal-box bg-white rounded-[2rem] p-0 overflow-hidden shadow-2xl max-w-lg">
+        <div className="modal-box bg-white rounded-4xl p-0 overflow-hidden shadow-2xl max-w-lg">
           <div className="bg-[#00332c] p-6 text-white">
             <h3 className="font-black text-xl">Policy Summary</h3>
             <p className="text-xs opacity-70 truncate">{detailsPolicy?.policyTitle}</p>

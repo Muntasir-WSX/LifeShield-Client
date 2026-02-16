@@ -7,8 +7,6 @@ const ArticleCard = ({ blog }) => {
     const { _id, title, summary, image, date, total_visit, author } = blog;
     const axiosPublic = useAxiosPublic();
     const navigate = useNavigate();
-
-    // ভিজিট কাউন্ট বাড়িয়ে ডিটেইলস পেজে যাওয়ার ফাংশন
     const handleProceedToDetails = async () => {
         try {
             await axiosPublic.patch(`/blog/visit/${_id}`);
@@ -20,7 +18,7 @@ const ArticleCard = ({ blog }) => {
     };
 
     return (
-        <div className="bg-white rounded-[32px] overflow-hidden group border border-gray-100 hover:shadow-xl transition-all duration-500 flex flex-col h-full">
+        <div className="bg-white rounded-4xl overflow-hidden group border border-gray-100 hover:shadow-xl transition-all duration-500 flex flex-col h-full">
             {/* Image */}
             <div className="relative h-48 overflow-hidden">
                 <img src={image} alt={title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
@@ -29,11 +27,11 @@ const ArticleCard = ({ blog }) => {
                 </div>
             </div>
 
-            <div className="p-6 flex flex-col flex-grow">
+            <div className="p-6 flex flex-col grow">
                 <h3 className="text-lg font-bold text-[#00332c] mb-2 line-clamp-2 h-14 group-hover:text-green-600 transition-colors">
                     {title}
                 </h3>
-                <p className="text-gray-500 text-sm mb-6 line-clamp-3 flex-grow">
+                <p className="text-gray-500 text-sm mb-6 line-clamp-3 grow">
                     {summary}
                 </p>
                 
@@ -50,7 +48,7 @@ const ArticleCard = ({ blog }) => {
 
             {/* --- DaisyUI Modal --- */}
             <dialog id={`modal_${_id}`} className="modal modal-bottom sm:modal-middle">
-                <div className="modal-box bg-white rounded-[2rem] p-0 overflow-hidden max-w-2xl">
+                <div className="modal-box bg-white rounded-4xl p-0 overflow-hidden max-w-2xl">
                     <img src={image} className="w-full h-56 object-cover" alt="" />
                     <div className="p-8">
                         <div className="flex items-center gap-4 mb-4 text-xs font-bold text-green-600 uppercase tracking-widest">

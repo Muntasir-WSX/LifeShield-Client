@@ -16,7 +16,7 @@ const PaymentPage = () => {
 
     return (
         <div className="max-w-2xl mx-auto py-6 md:py-10 px-4">
-            <div className="bg-white p-6 md:p-10 rounded-[1.5rem] md:rounded-[2.5rem] shadow-xl md:shadow-2xl border border-gray-100 text-center">
+            <div className="bg-white p-6 md:p-10 rounded-3xl md:rounded-[2.5rem] shadow-xl md:shadow-2xl border border-gray-100 text-center">
                 <div className="w-16 h-16 md:w-20 md:h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4 md:mb-6">
                     <ShieldCheck size={32} className="md:w-10 md:h-10" />
                 </div>
@@ -31,7 +31,7 @@ const PaymentPage = () => {
                         </span>
                     </div>
                     
-                    <div className="h-px bg-gray-200 my-3 md:hidden"></div> {/* মোবাইলে সেপারেটর */}
+                    <div className="h-px bg-gray-200 my-3 md:hidden"></div> 
 
                     <div className="flex justify-between items-center text-lg md:text-xl font-black text-[#00332c]">
                         <span>Total Premium:</span>
@@ -40,7 +40,7 @@ const PaymentPage = () => {
                 </div>
 
                 {/* Stripe Elements Provider */}
-                <div className="p-4 md:p-6 border-2 border-green-500/20 rounded-[1.5rem] md:rounded-3xl bg-green-50/10">
+                <div className="p-4 md:p-6 border-2 border-green-500/20 rounded-3xl md:rounded-3xl bg-green-50/10">
                     <Elements stripe={stripePromise}>
                         <CheckoutForm amount={amount}  appId={id} />
                     </Elements>

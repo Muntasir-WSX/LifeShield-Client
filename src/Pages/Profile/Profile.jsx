@@ -10,9 +10,7 @@ const Profile = () => {
     const axiosPublic = useAxiosPublic();
     const [isEditing, setIsEditing] = useState(false);
 
-    // ধরা যাক ইউজারের রোল আমাদের ডাটাবেজ থেকে আসবে, আপাতত আমরা একটি সিম্পল রোল ধরছি
-    // (আপনি চাইলে useQuery দিয়ে ইউজারের রোলটি সার্ভার থেকে নিয়ে আসতে পারেন)
-    const userRole = "Customer"; // Example: Admin / Agent / Customer
+    const userRole = "Customer"; // it will be dynamic
 
     const handleUpdate = async (e) => {
         e.preventDefault();
@@ -21,13 +19,10 @@ const Profile = () => {
         const photo = form.photo.value;
 
         try {
-            // ১. Firebase প্রোফাইল আপডেট
             await updateProfile(user, {
                 displayName: name,
                 photoURL: photo
             });
-
-            // ২. Database আপডেট (আপনার সার্ভারের রুট অনুযায়ী)
             const updatedData = { name, photo };
             const res = await axiosPublic.patch(`/users/${user.email}`, updatedData);
 

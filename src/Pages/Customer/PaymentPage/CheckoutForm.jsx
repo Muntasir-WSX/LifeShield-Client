@@ -70,7 +70,7 @@ const CheckoutForm = ({ amount, appId }) => {
                     amount: amount,
                     appId: appId,
                     date: new Date(),
-                    status: 'Awaiting Approval', // আপনার আগের লজিক অনুযায়ী
+                    status: 'Awaiting Approval', 
                     paymentStatus: 'Paid', 
                     agentEmail: applicationData?.agentEmail || '', 
                     agentName: applicationData?.agentName || '',
@@ -109,7 +109,7 @@ const CheckoutForm = ({ amount, appId }) => {
                 </div>
 
                 {/* --- Form Section --- */}
-                <div className="bg-white m-2 rounded-[32px] p-6 md:p-8">
+                <div className="bg-white m-2 rounded-4xl p-6 md:p-8">
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div>
                             <label className="block text-[#00332c] text-[10px] font-black uppercase mb-3 tracking-widest opacity-50">

@@ -116,7 +116,7 @@ const ManageApplications = () => {
                 <td>
                   {app.status === "Approved" ? (
                     <select
-                      className="select select-bordered select-sm w-full max-w-[160px] bg-blue-50 border-blue-200 rounded-lg focus:outline-[#00332c]"
+                      className="select select-bordered select-sm w-full max-w-40 bg-blue-50 border-blue-200 rounded-lg focus:outline-[#00332c]"
                       onChange={(e) => handleAssignAgent(app._id, e.target.value)}
                       defaultValue=""
                     >
@@ -182,7 +182,7 @@ const ManageApplications = () => {
 
       {/* --- Details Modal --- */}
       <dialog id="admin_details_modal" className="modal modal-bottom sm:modal-middle">
-        <div className="modal-box max-w-lg bg-white rounded-[2rem] p-0 overflow-hidden shadow-2xl">
+        <div className="modal-box max-w-lg bg-white rounded-4xl p-0 overflow-hidden shadow-2xl">
           <div className="bg-[#00332c] p-6 text-white">
             <h3 className="font-black text-xl">Application Details</h3>
             <p className="text-xs opacity-70">Reviewing customer's submission</p>

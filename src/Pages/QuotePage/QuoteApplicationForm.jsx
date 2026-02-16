@@ -135,7 +135,7 @@ const QuoteApplicationFrom = () => {
           </div>
         </div>
 
-        <div className="h-px bg-gradient-to-r from-transparent via-gray-100 to-transparent"></div>
+        <div className="h-px bg-linear-to-r from-transparent via-gray-100 to-transparent"></div>
 
         {/* Section 2: Nominee */}
         <div className="space-y-8">
@@ -183,7 +183,7 @@ const QuoteApplicationFrom = () => {
           </div>
         </div>
 
-        <div className="h-px bg-gradient-to-r from-transparent via-gray-100 to-transparent"></div>
+        <div className="h-px bg-linear-to-r from-transparent via-gray-100 to-transparent"></div>
 
         {/* Section 3: Health */}
         <div className="space-y-8">
@@ -223,7 +223,7 @@ const QuoteApplicationFrom = () => {
             </div>
             <button
               type="submit"
-              className="w-full md:w-auto px-16 py-6 text-lg font-black text-white bg-[#00332c] rounded-[2rem] hover:bg-black hover:-translate-y-1 transition-all duration-300 shadow-[0_20px_50px_rgba(0,51,44,0.2)] active:scale-95 uppercase tracking-widest"
+              className="w-full md:w-auto px-16 py-6 text-lg font-black text-white bg-[#00332c] rounded-4xl hover:bg-black hover:-translate-y-1 transition-all duration-300 shadow-[0_20px_50px_rgba(0,51,44,0.2)] active:scale-95 uppercase tracking-widest"
             >
               Confirm & Pay Now
             </button>

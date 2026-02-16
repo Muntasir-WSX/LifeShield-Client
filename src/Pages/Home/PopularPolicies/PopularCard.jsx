@@ -23,7 +23,7 @@ const PopularCard = ({ policy }) => {
           className="w-full h-full object-cover transform transition-transform duration-700 group-hover:scale-110"
         />
         {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#00332c]/90 via-[#00332c]/20 to-transparent"></div>
+        <div className="absolute inset-0 bg-linear-to-t from-[#00332c]/90 via-[#00332c]/20 to-transparent"></div>
 
         {/* Category Badge */}
         <div className="absolute top-4 left-4">
@@ -42,7 +42,7 @@ const PopularCard = ({ policy }) => {
       </div>
 
       {/* Content Section */}
-      <div className="p-6 flex flex-col flex-grow bg-white">
+      <div className="p-6 flex flex-col grow bg-white">
         <h3 className="text-xl font-bold text-[#00332c] mb-3 group-hover:text-green-600 transition-colors line-clamp-1">
           {title}
         </h3>

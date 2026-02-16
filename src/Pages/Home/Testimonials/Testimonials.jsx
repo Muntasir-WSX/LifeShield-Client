@@ -52,7 +52,7 @@ const Testimonials = () => {
                                 <FaQuoteLeft className="text-green-100 text-3xl mb-4" />
                                 
                                 {/* Message */}
-                                <p className="text-gray-600 text-sm italic mb-6 flex-grow leading-relaxed">
+                                <p className="text-gray-600 text-sm italic mb-6 grow leading-relaxed">
                                     "{review.message}"
                                 </p>
 

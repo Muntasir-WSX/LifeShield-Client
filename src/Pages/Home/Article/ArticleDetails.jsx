@@ -32,13 +32,13 @@ const ArticleDetails = () => {
 
         <article className="bg-white rounded-[3rem] shadow-xl shadow-gray-200/50 overflow-hidden border border-gray-100">
           {/* Main Image Section */}
-          <div className="relative h-[300px] md:h-[500px]">
+          <div className="relative h-75 md:h-125">
             <img
               src={blog?.image}
               className="w-full h-full object-cover"
               alt={blog?.title}
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+            <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent"></div>
             <div className="absolute bottom-8 left-8 md:left-16 right-8">
                <div className="flex items-center gap-3 mb-4">
                   <span className="bg-green-500 text-[#00332c] text-xs font-black px-4 py-1.5 rounded-full uppercase tracking-widest flex items-center gap-2">
