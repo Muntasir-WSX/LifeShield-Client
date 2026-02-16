@@ -114,7 +114,7 @@ const ManageApplications = () => {
                   </span>
                 </td>
                 <td>
-                  {app.status === "Approved" ? (
+                  {app.status === "Approved"  && !app.agentEmail ? (
                     <select
                       className="select select-bordered select-sm w-full max-w-40 bg-blue-50 border-blue-200 rounded-lg focus:outline-[#00332c]"
                       onChange={(e) => handleAssignAgent(app._id, e.target.value)}
@@ -127,10 +127,11 @@ const ManageApplications = () => {
                         </option>
                       ))}
                     </select>
-                  ) : app.status === "Assigned" ? (
+                  ) : app.status === "Assigned" || app.agentEmail  ? (
                     <div className="flex flex-col">
-                      <span className="text-[10px] font-bold text-blue-600">Working Agent:</span>
-                      <span className="text-xs text-gray-500 font-medium">{app.agentName}</span>
+                      <span className="text-[10px] font-bold text-blue-600">Assigned Agent</span>
+                      <span className="text-xs text-gray-700 font-bold">{app.agentName}</span>
+      <span className="text-[9px] text-gray-400">{app.agentEmail}</span>
                     </div>
                   ) : app.status === "Awaiting Approval" ? (
                     <div className="flex items-center gap-1 text-orange-600 font-bold text-xs animate-pulse">

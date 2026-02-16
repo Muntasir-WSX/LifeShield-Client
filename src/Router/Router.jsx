@@ -56,7 +56,7 @@ const Router = createBrowserRouter([
       {
         path: "policy/:id",
         element: (
-          <PrivateRoutes>
+          <PrivateRoutes> 
             <AllPoliciesDetails />
           </PrivateRoutes>
         ),
