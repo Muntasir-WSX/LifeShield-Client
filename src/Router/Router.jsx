@@ -28,6 +28,8 @@ import AssignedCustomers from "../Pages/Agent/Assigned Customers/AssignedCustome
 import MyBlogs from "../Pages/Agent/My Blogs/MyBlogs";
 import PolicyClearance from "../Pages/Agent/Policy Clearance/PolicyClearance";
 import Loading from "../SharedComponents/Loading/Loading";
+import AdminRoute from "../Routes/AdminRoutes";
+import AgentRoute from "../Routes/AgentRoutes";
 
 
 const DashboardIndex = () => {
@@ -60,8 +62,8 @@ const Router = createBrowserRouter([
         ),
       },
       { path: "blogs", element: <Blogs /> },
-      { path: "quote", element: <QuotePage /> },
-      { path: "quote/:id", element: <QuotePage /> },
+      { path: "quote", element: <PrivateRoutes><QuotePage /> </PrivateRoutes> },
+      { path: "quote/:id", element: <PrivateRoutes><QuotePage /> </PrivateRoutes> },
       {
         path: "apply",
         element: (
@@ -100,16 +102,16 @@ const Router = createBrowserRouter([
       { path: "claim-request", element: <ClaimRequest /> },
 
       // --- Admin Routes ---
-      { path: "manage-applications", element: <ManageApplications /> },
-      { path: "manage-users", element: <ManageUsers /> },
-      { path: "manage-policies", element: <ManagePolicies /> },
-      { path: "manage-transactions", element: <Transactions /> },
-      { path: "manage-blogs", element: <AllBlogs /> },
+      { path: "manage-applications", element: <AdminRoute><ManageApplications /></AdminRoute>  },
+      { path: "manage-users", element: <AdminRoute><ManageUsers /></AdminRoute>  },
+      { path: "manage-policies", element:  <AdminRoute><ManagePolicies /></AdminRoute> },
+      { path: "manage-transactions", element: <AdminRoute><Transactions /> </AdminRoute>},
+      { path: "manage-blogs", element: <AdminRoute><AllBlogs /></AdminRoute> },
 
       // --- Agent Routes ---
-      {path:"assigned-customers" ,element:<AssignedCustomers></AssignedCustomers>},
-      {path:"agent-blogs" ,element:<MyBlogs></MyBlogs>},
-      {path:"policy-clearance" ,element:<PolicyClearance></PolicyClearance>},
+      {path:"assigned-customers" ,element:<AgentRoute><AssignedCustomers></AssignedCustomers></AgentRoute>},
+      {path:"agent-blogs" ,element: <AgentRoute><MyBlogs></MyBlogs></AgentRoute>},
+      {path:"policy-clearance" ,element: <AgentRoute><PolicyClearance></PolicyClearance></AgentRoute>},
 
     ],
   },

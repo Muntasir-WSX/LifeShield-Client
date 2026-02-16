@@ -1,6 +1,6 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Trash2, UserPlus, ShieldCheck } from 'lucide-react'; // আরও কিছু আইকন যোগ করা হয়েছে
+import { Trash2, UserPlus, ShieldCheck } from 'lucide-react'; 
 import Swal from 'sweetalert2';
 import useAxiosSecure from '../../../Hooks/UseAxiosSecure';
 
@@ -62,7 +62,7 @@ const ManageUsers = () => {
                             <tr key={user._id} className="hover:bg-gray-50/80 transition-colors border-b border-gray-50">
                                 <td className="font-medium text-gray-400">{index + 1}</td>
                                 <td>
-                                    <div className="flex items-center gap-3 min-w-[200px]">
+                                    <div className="flex items-center gap-3 min-w-50">
                                         <div className="avatar">
                                             <div className="mask mask-squircle w-10 h-10 shadow-sm">
                                                 <img src={user.photo || "https://i.ibb.co/mR4pY6F/user.png"} alt="User" />
@@ -83,7 +83,7 @@ const ManageUsers = () => {
                                     </span>
                                 </td>
                                 <td>
-                                    <div className="flex items-center justify-center gap-2 min-w-[180px]">
+                                    <div className="flex items-center justify-center gap-2 min-w-45">
                                         {user.role !== 'agent' && (
                                             <button 
                                                 onClick={() => handleMakeRole(user, 'agent')} 
