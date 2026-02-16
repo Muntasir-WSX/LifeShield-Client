@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react'; // useEffect যোগ করা হয়েছে
 import useAuth from '../../Hooks/useAuth';
 import useAxiosPublic from '../../Hooks/UseAxiosPublic';
 import Swal from 'sweetalert2';
@@ -9,8 +9,21 @@ const Profile = () => {
     const { user, loading } = useAuth();
     const axiosPublic = useAxiosPublic();
     const [isEditing, setIsEditing] = useState(false);
+    const [userRole, setUserRole] = useState("Loading..."); // ডায়নামিক রোলের জন্য স্টেট
 
-    const userRole = "Customer"; // it will be dynamic
+    // ডায়নামিক রোল ফেচ করার জন্য useEffect
+    useEffect(() => {
+        if (user?.email) {
+            axiosPublic.get(`/users/role/${user.email}`)
+                .then(res => {
+                    // যদি ডাটাবেসে রোল থাকে তবে সেটি সেট করবে, নাহলে 'Customer'
+                    setUserRole(res.data?.role || "Customer");
+                })
+                .catch(() => {
+                    setUserRole("Customer");
+                });
+        }
+    }, [user?.email, axiosPublic]);
 
     const handleUpdate = async (e) => {
         e.preventDefault();
@@ -40,7 +53,7 @@ const Profile = () => {
     return (
         <div className="min-h-screen bg-gray-50 py-12 px-4">
             <div className="max-w-3xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100">
-                {/* Header Section with Badge */}
+                {/* Header Section */}
                 <div className="bg-[#00332c] h-32 relative">
                     <div className="absolute -bottom-12 left-10">
                         <div className="avatar">
@@ -50,11 +63,11 @@ const Profile = () => {
                         </div>
                     </div>
                     <div className="absolute bottom-4 right-10">
-                        {/* Dynamic Role Badge */}
-                        <div className={`badge badge-lg gap-2 font-bold p-4 ${
-                            userRole === 'Admin' ? 'badge-error' : 
-                            userRole === 'Agent' ? 'badge-warning' : 'badge-success'
-                        } text-white`}>
+                        {/* ডায়নামিক রোল ব্যাজ */}
+                        <div className={`badge badge-lg gap-2 font-bold p-4 shadow-lg ${
+                            userRole === 'Admin' ? 'bg-red-500 border-none' : 
+                            userRole === 'Agent' ? 'bg-orange-500 border-none' : 'bg-emerald-500 border-none'
+                        } text-white uppercase text-[10px]`}>
                             <FaIdBadge /> {userRole}
                         </div>
                     </div>
@@ -65,11 +78,13 @@ const Profile = () => {
                     <div className="flex justify-between items-start mb-8">
                         <div>
                             <h2 className="text-3xl font-black text-[#00332c]">{user?.displayName}</h2>
-                            <p className="flex items-center gap-2 text-gray-500 mt-1"><FaEnvelope className="text-sm"/> {user?.email}</p>
+                            <p className="flex items-center gap-2 text-gray-500 mt-1 lowercase italic">
+                                <FaEnvelope className="text-sm text-emerald-600"/> {user?.email}
+                            </p>
                         </div>
                         <button 
                             onClick={() => setIsEditing(!isEditing)} 
-                            className="btn btn-sm btn-outline btn-success rounded-lg"
+                            className="btn btn-sm bg-[#00332c] text-white hover:bg-black rounded-lg border-none"
                         >
                             <FaUserEdit /> {isEditing ? "Cancel" : "Edit Profile"}
                         </button>
@@ -77,34 +92,37 @@ const Profile = () => {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                         <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
-                            <p className="text-xs font-bold text-gray-400 uppercase mb-1 flex items-center gap-2">
-                                <FaClock /> Last Login (Firebase)
+                            <p className="text-[10px] font-bold text-gray-400 uppercase mb-1 flex items-center gap-2 tracking-widest">
+                                <FaClock className="text-emerald-600" /> Firebase Access
                             </p>
-                            <p className="text-sm font-medium text-gray-700">{user?.metadata?.lastSignInTime || "Not available"}</p>
+                            <p className="text-sm font-medium text-gray-700">{user?.metadata?.lastSignInTime ? new Date(user?.metadata?.lastSignInTime).toLocaleString() : "Not available"}</p>
                         </div>
                         <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
-                            <p className="text-xs font-bold text-gray-400 uppercase mb-1">Account Status</p>
-                            <span className="badge badge-success badge-xs"></span> <span className="text-sm font-bold text-green-600">Verified User</span>
+                            <p className="text-[10px] font-bold text-gray-400 uppercase mb-1 tracking-widest">Account Type</p>
+                            <div className="flex items-center gap-2">
+                                <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                                <span className="text-sm font-bold text-green-600 uppercase tracking-tighter">Verified {userRole} Account</span>
+                            </div>
                         </div>
                     </div>
 
                     {/* Edit Form */}
                     {isEditing && (
-                        <form onSubmit={handleUpdate} className="bg-green-50/50 p-6 rounded-2xl border border-green-100 animate-in fade-in duration-300">
+                        <form onSubmit={handleUpdate} className="bg-emerald-50/50 p-6 rounded-2xl border border-emerald-100 animate-in fade-in slide-in-from-top-4 duration-500">
                             <div className="space-y-4">
                                 <div className="form-control">
-                                    <label className="label text-sm font-bold">Full Name</label>
-                                    <input type="text" name="name" defaultValue={user?.displayName} className="input input-bordered focus:outline-green-500" />
+                                    <label className="label text-xs font-bold uppercase text-gray-500">Full Name</label>
+                                    <input type="text" name="name" defaultValue={user?.displayName} className="input input-bordered focus:border-[#00332c] focus:outline-none" />
                                 </div>
                                 <div className="form-control">
-                                    <label className="label text-sm font-bold">Photo URL</label>
-                                    <input type="text" name="photo" defaultValue={user?.photoURL} className="input input-bordered focus:outline-green-500" />
+                                    <label className="label text-xs font-bold uppercase text-gray-500">Photo URL</label>
+                                    <input type="text" name="photo" defaultValue={user?.photoURL} className="input input-bordered focus:border-[#00332c] focus:outline-none" />
                                 </div>
                                 <div className="form-control">
-                                    <label className="label text-sm font-bold">Email (Non-editable)</label>
-                                    <input type="text" value={user?.email} disabled className="input input-bordered bg-gray-200 cursor-not-allowed" />
+                                    <label className="label text-xs font-bold uppercase text-gray-500">Email Address</label>
+                                    <input type="text" value={user?.email} disabled className="input input-bordered bg-gray-100 cursor-not-allowed opacity-60 text-sm" />
                                 </div>
-                                <button type="submit" className="btn btn-success text-white w-full mt-4">Save Changes</button>
+                                <button type="submit" className="btn bg-[#00332c] hover:bg-black text-white w-full mt-4 border-none uppercase tracking-widest">Update Profile</button>
                             </div>
                         </form>
                     )}
