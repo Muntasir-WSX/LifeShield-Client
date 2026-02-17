@@ -16,7 +16,7 @@ const AllPolicies = () => {
     queryKey: ["policies", search, category, currentPage],
     queryFn: async () => {
       const res = await axiosPublic.get(
-        `/all-policies?search=${search}&category=${category}&page=${currentPage}&size=${itemsPerPage}`,
+        `/all-policies?search=${search}&category=${category}&page=${currentPage}&size=${itemsPerPage}`
       );
       return res.data;
     },
@@ -28,10 +28,10 @@ const AllPolicies = () => {
 
   return (
     <div className="container mx-auto py-10">
-
+      {/* Search and Filter Section */}
       <div className="bg-white p-6 rounded-4xl shadow-sm border border-gray-100 mb-10 mx-4">
         <div className="flex flex-col md:flex-row items-center gap-6">
-         
+          {/* Search Input */}
           <div className="relative w-full md:flex-1">
             <FaSearch className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400" />
             <input
@@ -40,17 +40,19 @@ const AllPolicies = () => {
               className="w-full pl-12 pr-4 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-green-500 transition-all outline-none text-[#00332c] font-medium"
               onChange={(e) => {
                 setSearch(e.target.value);
-                setCurrentPage(0); 
+                setCurrentPage(0);
               }}
             />
           </div>
+
+          {/* Filter Dropdown */}
           <div className="relative w-full md:w-1/3">
             <FaFilter className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 text-xs" />
             <select
               className="w-full pl-12 pr-4 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-green-500 transition-all outline-none text-[#00332c] font-bold appearance-none cursor-pointer"
               onChange={(e) => {
                 setCategory(e.target.value);
-                setCurrentPage(0); 
+                setCurrentPage(0);
               }}
             >
               <option value="All">All Categories</option>
@@ -62,7 +64,7 @@ const AllPolicies = () => {
           </div>
         </div>
 
-       
+        {/* Status Text */}
         <div className="mt-4 px-2">
           <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">
             Showing {policiesData?.result?.length || 0} of{" "}
@@ -70,25 +72,58 @@ const AllPolicies = () => {
           </p>
         </div>
       </div>
+
       {/* Grid Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-4">
-        {policiesData?.result.map((policy) => (
+        {policiesData?.result?.map((policy) => (
           <AllPoliciesCard key={policy._id} policy={policy} />
         ))}
       </div>
 
-      {/* Pagination Controls */}
-      <div className="flex justify-center mt-12 gap-2">
-        {[...Array(totalPages).keys()].map((number) => (
+      {/* Empty State */}
+      {policiesData?.result?.length === 0 && (
+        <div className="text-center py-20 text-gray-400 font-medium text-lg">
+          No policies found matching your criteria.
+        </div>
+      )}
+
+      {/* --- PAGINATION CONTROLS --- */}
+      {totalPages > 1 && (
+        <div className="flex flex-wrap justify-center items-center gap-2 py-12">
+          {/* Prev Button */}
           <button
-            key={number}
-            className={`btn ${currentPage === number ? "btn-success" : "btn-outline"}`}
-            onClick={() => setCurrentPage(number)}
+            onClick={() => setCurrentPage(Math.max(0, currentPage - 1))}
+            disabled={currentPage === 0}
+            className="btn btn-sm bg-white border-green-900 text-green-900 hover:bg-green-50 disabled:opacity-50 px-4 rounded-lg"
           >
-            {number + 1}
+            Prev
           </button>
-        ))}
-      </div>
+
+          {/* Page Numbers */}
+          {[...Array(totalPages).keys()].map((page) => (
+            <button
+              key={page}
+              onClick={() => setCurrentPage(page)}
+              className={`btn btn-sm border-green-900 transition-all px-4 rounded-lg ${
+                currentPage === page
+                  ? "bg-green-900 text-white hover:bg-[#00221d]"
+                  : "bg-white text-green-900 hover:bg-green-50"
+              }`}
+            >
+              {page + 1}
+            </button>
+          ))}
+
+          {/* Next Button */}
+          <button
+            onClick={() => setCurrentPage(Math.min(totalPages - 1, currentPage + 1))}
+            disabled={currentPage === totalPages - 1}
+            className="btn btn-xs bg-white border-green-900 text-green-900 hover:bg-green-50 disabled:opacity-50 px-4 rounded-lg"
+          >
+            Next
+          </button>
+        </div>
+      )}
     </div>
   );
 };

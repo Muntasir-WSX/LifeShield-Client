@@ -3,6 +3,7 @@ import { Send, CheckCircle, Clock, FileText, UploadCloud } from "lucide-react";
 import Swal from "sweetalert2";
 import useAxiosSecure from "../../../Hooks/UseAxiosSecure";
 import useAuth from "../../../Hooks/useAuth";
+import Loading from "../../../SharedComponents/Loading/Loading";
 
 const uploadToImgBB = async (file) => {
   const formData = new FormData();
@@ -253,7 +254,7 @@ const ClaimRequest = () => {
                   className="btn flex-1 bg-green-600 hover:bg-green-700 text-white border-none"
                 >
                   {loading ? (
-                    <span className="loading loading-spinner"></span>
+                    <Loading></Loading>
                   ) : (
                     "Submit Invoice"
                   )}
