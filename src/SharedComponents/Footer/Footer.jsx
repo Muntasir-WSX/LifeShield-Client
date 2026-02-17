@@ -154,7 +154,7 @@ const Footer = () => {
                     <div className="p-2.5 bg-[#0a4d44] rounded-lg text-green-400 group-hover:bg-green-500 group-hover:text-white transition-all duration-300">
                         <FaEnvelope size={16} />
                     </div>
-                    <p className="text-gray-300 text-sm break-all">alimuntasir2001@gmail.com</p>
+                    <p className="text-gray-300 text-sm break-all">lifeshield@gmail.com</p>
                 </div>
             </div>
         </div>
