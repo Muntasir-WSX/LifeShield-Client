@@ -15,14 +15,15 @@ const QuotePage = () => {
     const [isSmoker, setIsSmoker] = useState(false);
     const [coverage, setCoverage] = useState(1000000); 
     const [premium, setPremium] = useState(0);
-
-    const { data: allPolicies = [], isLoading } = useQuery({
-        queryKey: ['all-policies-list'],
-        queryFn: async () => {
-            const res = await axiosPublic.get('/all-policies');
-            return res.data.result;
-        }
-    });
+const { data: allPolicies = [], isLoading } = useQuery({
+    queryKey: ['all-policies-list'],
+    queryFn: async () => {
+        const res = await axiosPublic.get('/policies-list');
+        console.log("Fetched Policies:", res.data); 
+        return res.data; 
+    },
+    staleTime: 0,
+});
 
     useEffect(() => {
         if (id && allPolicies.length > 0) {

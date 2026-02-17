@@ -22,13 +22,13 @@ const AllPoliciesCard = ({ policy }) => {
             </div>
 
             {/* Content Section */}
-            <div className="p-8 flex flex-col flex-grow">
+            <div className="p-8 flex flex-col grow">
                 <h3 className="text-2xl font-black text-[#00332c] mb-3 leading-tight group-hover:text-green-600 transition-colors">
                     {title}
                 </h3>
                 
                 {/* Short Details (20-30 words logic) */}
-                <p className="text-gray-500 text-sm mb-6 line-clamp-3 flex-grow">
+                <p className="text-gray-500 text-sm mb-6 line-clamp-3 grow">
                     {description}
                 </p>
 

@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { QueryClient, QueryClientContext, useQuery } from '@tanstack/react-query';
 import { FaEdit, FaTrashAlt, FaPlus } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 import useAxiosSecure from '../../../Hooks/UseAxiosSecure';
+import Loading from '../../../SharedComponents/Loading/Loading';
 
 
 const ManagePolicies = () => {
@@ -69,6 +70,8 @@ const ManagePolicies = () => {
             }
 
             if (res.data.insertedId || res.data.modifiedCount > 0) {
+                QueryClient.invalidateQueries({ queryKey: ['all-policies-admin'] });
+                QueryClient.invalidateQueries({ queryKey: ['all-policies-list'] });
                 Swal.fire("Success!", `Policy ${selectedPolicy ? 'updated' : 'added'} successfully`, "success");
                 document.getElementById('policy_modal').close();
                 form.reset();
@@ -80,7 +83,7 @@ const ManagePolicies = () => {
         }
     };
 
-    if (isLoading) return <div className="p-10 text-center">Loading Policies...</div>;
+    if (isLoading) return <Loading></Loading>
 
     return (
         <div className="p-6 bg-white rounded-3xl shadow-sm border border-gray-100">
