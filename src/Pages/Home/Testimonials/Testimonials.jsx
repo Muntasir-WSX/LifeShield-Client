@@ -4,8 +4,6 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Autoplay } from 'swiper/modules';
 import { FaQuoteLeft, FaStar } from 'react-icons/fa';
 import useAxiosPublic from '../../../Hooks/UseAxiosPublic';
-
-// Swiper Styles
 import 'swiper/css';
 import 'swiper/css/pagination';
 import Loading from '../../../SharedComponents/Loading/Loading';
