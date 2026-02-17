@@ -223,7 +223,7 @@ const QuoteApplicationFrom = () => {
             </div>
             <button
               type="submit"
-              className="w-full md:w-auto px-16 py-6 text-lg font-black text-white bg-[#00332c] rounded-4xl hover:bg-black hover:-translate-y-1 transition-all duration-300 shadow-[0_20px_50px_rgba(0,51,44,0.2)] active:scale-95 uppercase tracking-widest"
+              className="w-full bg-green-900 hover:bg-green-700 hover:text-white text-white font-black py-4 rounded-2xl flex items-center justify-center gap-3 transition-all duration-300"
             >
               Confirm & Pay Now
             </button>

@@ -104,7 +104,7 @@ const AllPoliciesDetails = () => {
 
                             <button 
                                 onClick={() => navigate(`/quote/${policy?._id}`)}
-                                className="w-full bg-green-500 hover:bg-green-600 text-[#00332c] font-black py-5 rounded-2xl flex items-center justify-center gap-3 transition-all active:scale-95 shadow-lg shadow-green-500/20"
+                                className="w-full bg-white hover:bg-green-900 hover:text-white text-green-900 font-black py-4 rounded-2xl flex items-center justify-center gap-3 transition-all duration-300"
                             >
                                 <FaCalculator /> Get A Quote Now
                             </button>

@@ -29,7 +29,7 @@ const AllPolicies = () => {
   return (
     <div className="container mx-auto py-10">
 
-      <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 mb-10 mx-4">
+      <div className="bg-white p-6 rounded-4xl shadow-sm border border-gray-100 mb-10 mx-4">
         <div className="flex flex-col md:flex-row items-center gap-6">
          
           <div className="relative w-full md:flex-1">

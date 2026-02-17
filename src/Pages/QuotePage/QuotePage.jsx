@@ -174,7 +174,7 @@ const QuotePage = () => {
                             <Link 
                                 to="/apply" 
                                 state={{ premium, coverage, policyTitle: selectedPolicy?.title, policyId: selectedPolicy?._id }}
-                                className={`btn btn-success btn-lg w-full rounded-2xl shadow-xl shadow-green-900/20 text-white font-black text-lg ${!selectedPolicy && 'btn-disabled'}`}
+                                className={`w-full bg-white hover:bg-green-900 hover:text-white text-green-900 font-black py-4 rounded-2xl flex items-center justify-center gap-3 transition-all duration-300 ${!selectedPolicy && 'btn-disabled'}`}
                             >
                                 Apply for Policy
                             </Link>
