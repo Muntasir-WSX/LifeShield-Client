@@ -7,10 +7,6 @@ Click here to visit Life Shield Live Site https://life-shield-2a54f.web.app/
 🔑 Admin Credentials
 To explore the administrative features, use the following credentials:
 
-Email:admin2001@gmail.com //admin mail
-
-Password:Muntasir123
-
 🚀 Key Features
 Dynamic Insurance Exploration: Users can browse through a wide variety of insurance policies and view detailed information for each.
 
