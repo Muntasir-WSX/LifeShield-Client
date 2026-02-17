@@ -1,14 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Send, CheckCircle, Clock, FileText, UploadCloud } from "lucide-react";
+import { CheckCircle, Clock, UploadCloud, ChevronLeft, ChevronRight } from "lucide-react";
 import Swal from "sweetalert2";
 import useAxiosSecure from "../../../Hooks/UseAxiosSecure";
 import useAuth from "../../../Hooks/useAuth";
 import Loading from "../../../SharedComponents/Loading/Loading";
-
-const uploadToImgBB = async (file) => {
-  const formData = new FormData();
-  formData.append("image", file);
-};
 
 const ClaimRequest = () => {
   const { user } = useAuth();
@@ -21,12 +16,14 @@ const ClaimRequest = () => {
   const [selectedPolicy, setSelectedPolicy] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  // প্যাগিনেশন ক্যালকুলেশন
+  const numberOfPages = Math.ceil(totalCount / itemsPerPage);
+  const pages = [...Array(numberOfPages).keys()];
+
   useEffect(() => {
     if (user?.email) {
       axiosSecure
-        .get(
-          `/my-approved-policies/${user.email}?page=${currentPage}&size=${itemsPerPage}`,
-        )
+        .get(`/my-approved-policies/${user.email}?page=${currentPage}&size=${itemsPerPage}`)
         .then((res) => {
           setPolicies(res.data.result || []);
           setTotalCount(res.data.count || 0);
@@ -37,8 +34,6 @@ const ClaimRequest = () => {
         });
     }
   }, [user?.email, axiosSecure, currentPage]);
-  const numberOfPages = Math.ceil(totalCount / itemsPerPage);
-  const pages = [...Array(numberOfPages).keys()];
 
   const handleClaimSubmit = async (e) => {
     e.preventDefault();
@@ -55,24 +50,26 @@ const ClaimRequest = () => {
     }
 
     try {
+      // এখানে আপাতত একটি হার্ডকোডেড লিঙ্ক দেওয়া হয়েছে, তুই তোর আপলোড লজিক বসাতে পারিস
       const claimData = {
         claimStatus: "Pending",
         claimReason: reason,
-        claimDocument:
-          "https://your-storage.com/files/invoice_" + Date.now() + ".pdf",
+        claimDocument: "https://your-storage.com/files/invoice_" + Date.now() + ".pdf",
         submittedAt: new Date().toISOString(),
       };
 
-      const res = await axiosSecure.patch(
-        `/applications/claim/${selectedPolicy._id}`,
-        claimData,
-      );
+      const res = await axiosSecure.patch(`/applications/claim/${selectedPolicy._id}`, claimData);
+      
       if (res.data.modifiedCount > 0) {
-        Swal.fire("Success", "Claim invoice submitted successfully", "success");
+        Swal.fire({
+          icon: 'success',
+          title: 'Submitted!',
+          text: 'Claim invoice submitted successfully',
+          confirmButtonColor: '#00332c'
+        });
+        
         setPolicies((prev) =>
-          prev.map((p) =>
-            p._id === selectedPolicy._id ? { ...p, ...claimData } : p,
-          ),
+          prev.map((p) => (p._id === selectedPolicy._id ? { ...p, ...claimData } : p))
         );
         setSelectedPolicy(null);
       }
@@ -84,8 +81,8 @@ const ClaimRequest = () => {
   };
 
   return (
-    <div className="p-4 space-y-6">
-      {/* Header section remains same */}
+    <div className="p-6">
+      {/* Header Section */}
       <div className="mb-6">
         <h3 className="text-xl font-bold text-[#00332c]">Claim & Invoices</h3>
         <p className="text-sm text-gray-500">
@@ -93,57 +90,53 @@ const ClaimRequest = () => {
         </p>
       </div>
 
-      <div className="overflow-x-auto bg-white rounded-lg shadow border border-gray-100">
+      {/* Table Section */}
+      <div className="overflow-x-auto bg-white rounded-2xl shadow-sm border border-gray-100">
         <table className="table w-full">
           <thead>
-            <tr className="bg-gray-50 text-[#00332c]">
-              <th className="py-4">Policy Name</th>
-              <th>Claim Status</th>
-              <th className="text-center">Action</th>
+            <tr className="bg-gray-50 text-[#00332c] border-b">
+              <th className="p-4 text-left">Policy Name</th>
+              <th className="p-4 text-left">Claim Status</th>
+              <th className="p-4 text-center">Action</th>
             </tr>
           </thead>
           <tbody>
             {policies.map((policy) => (
-              <tr
-                key={policy._id}
-                className="hover:bg-gray-50 border-b transition-colors"
-              >
-                <td className="font-bold text-gray-700 py-4">
-                  {policy.policyTitle || policy.policyName || "Policy Unit"}
+              <tr key={policy._id} className="border-b hover:bg-gray-50 transition-colors">
+                <td className="p-4">
+                  <div className="font-bold text-gray-700">
+                    {policy.policyTitle || "Policy Unit"}
+                  </div>
+                  <div className="text-[10px] opacity-50 uppercase font-mono">
+                    ID: {policy._id}
+                  </div>
                 </td>
-                <td>
+                <td className="p-4">
                   {policy.claimStatus ? (
-                    <div className="flex flex-col gap-1">
-                      <span
-                        className={`badge ${policy.claimStatus === "Pending" ? "badge-warning" : "badge-success text-white"} gap-1 py-3 text-xs font-bold`}
-                      >
-                        {policy.claimStatus === "Pending" ? (
-                          <Clock size={12} />
-                        ) : (
-                          <CheckCircle size={12} />
-                        )}
-                        {policy.claimStatus}
-                      </span>
-                    </div>
-                  ) : (
-                    <span className="text-gray-400 italic text-sm">
-                      No Invoice Filed
+                    <span
+                      className={`flex items-center gap-1 font-bold text-xs uppercase px-2 py-1 rounded-md w-fit ${
+                        policy.claimStatus === "Pending" 
+                        ? "text-orange-500 bg-orange-50" 
+                        : "text-green-600 bg-green-50"
+                      }`}
+                    >
+                      {policy.claimStatus === "Pending" ? <Clock size={14} /> : <CheckCircle size={14} />}
+                      {policy.claimStatus}
                     </span>
+                  ) : (
+                    <span className="text-gray-400 italic text-sm">No Invoice Filed</span>
                   )}
                 </td>
-                <td className="text-center">
+                <td className="p-4 text-center">
                   {!policy.claimStatus ? (
                     <button
                       onClick={() => setSelectedPolicy(policy)}
-                      className="btn btn-sm bg-[#00332c] text-white hover:bg-black border-none px-5 rounded-lg"
+                      className="btn btn-sm bg-[#00332c] text-white hover:bg-black border-none rounded-lg px-5"
                     >
                       Submit Claim
                     </button>
                   ) : (
-                    <button
-                      disabled
-                      className="btn btn-sm btn-disabled rounded-lg"
-                    >
+                    <button disabled className="btn btn-sm btn-disabled rounded-lg px-5">
                       Processed
                     </button>
                   )}
@@ -152,19 +145,46 @@ const ClaimRequest = () => {
             ))}
           </tbody>
         </table>
+        
+        {policies.length === 0 && (
+          <div className="text-center py-20 text-gray-400 font-medium">
+            No policy data found to claim.
+          </div>
+        )}
       </div>
 
+      {/* --- PAGINATION CONTROLS (Matched with PaymentStatus) --- */}
       {totalCount > itemsPerPage && (
-        <div className="flex justify-center gap-2 mt-4">
+        <div className="flex justify-center items-center gap-2 mt-8">
+          <button
+            onClick={() => setCurrentPage(Math.max(0, currentPage - 1))}
+            disabled={currentPage === 0}
+            className="btn btn-sm bg-white border-gray-300 text-gray-600 hover:bg-gray-100 disabled:opacity-50"
+          >
+            <ChevronLeft size={16} />
+          </button>
+          
           {pages.map((page) => (
             <button
               key={page}
               onClick={() => setCurrentPage(page)}
-              className={`btn btn-xs ${currentPage === page ? "bg-[#00332c] text-white" : ""}`}
+              className={`btn btn-sm border-none transition-all ${
+                currentPage === page
+                  ? "bg-[#00332c] text-white"
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              }`}
             >
               {page + 1}
             </button>
           ))}
+
+          <button
+            onClick={() => setCurrentPage(Math.min(numberOfPages - 1, currentPage + 1))}
+            disabled={currentPage === numberOfPages - 1}
+            className="btn btn-sm bg-white border-gray-300 text-gray-600 hover:bg-gray-100 disabled:opacity-50"
+          >
+            <ChevronRight size={16} />
+          </button>
         </div>
       )}
 
@@ -173,9 +193,7 @@ const ClaimRequest = () => {
         <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
           <div className="bg-white rounded-2xl p-8 max-w-lg w-full shadow-2xl">
             <div className="flex justify-between items-center mb-6">
-              <h4 className="text-xl font-bold text-[#00332c]">
-                Claim Settlement Form
-              </h4>
+              <h4 className="text-xl font-bold text-[#00332c]">Claim Settlement Form</h4>
               <button
                 onClick={() => setSelectedPolicy(null)}
                 className="text-gray-400 hover:text-red-500 text-3xl font-light"
@@ -186,23 +204,17 @@ const ClaimRequest = () => {
 
             <form onSubmit={handleClaimSubmit} className="space-y-4">
               <div>
-                <label className="label text-xs font-bold uppercase text-gray-500">
-                  Policy Name
-                </label>
+                <label className="label text-xs font-bold uppercase text-gray-500">Policy Name</label>
                 <input
                   type="text"
                   readOnly
-                  value={
-                    selectedPolicy.policyTitle || selectedPolicy.policyName
-                  }
+                  value={selectedPolicy.policyTitle || selectedPolicy.policyName}
                   className="input input-bordered w-full bg-gray-50 font-semibold"
                 />
               </div>
 
               <div>
-                <label className="label text-xs font-bold uppercase text-gray-500">
-                  Reason for Claim
-                </label>
+                <label className="label text-xs font-bold uppercase text-gray-500">Reason for Claim</label>
                 <textarea
                   name="reason"
                   required
@@ -211,11 +223,8 @@ const ClaimRequest = () => {
                 ></textarea>
               </div>
 
-              {/* PDF Upload Field */}
               <div>
-                <label className="label text-xs font-bold uppercase text-gray-500">
-                  Upload Invoice (PDF only)
-                </label>
+                <label className="label text-xs font-bold uppercase text-gray-500">Upload Invoice (PDF only)</label>
                 <div className="border-2 border-dashed border-gray-200 rounded-xl p-4 text-center hover:border-green-500 transition-colors bg-gray-50">
                   <input
                     type="file"
@@ -225,17 +234,10 @@ const ClaimRequest = () => {
                     className="hidden"
                     id="pdf-upload"
                   />
-                  <label
-                    htmlFor="pdf-upload"
-                    className="cursor-pointer flex flex-col items-center gap-2"
-                  >
+                  <label htmlFor="pdf-upload" className="cursor-pointer flex flex-col items-center gap-2">
                     <UploadCloud className="text-gray-400" size={32} />
-                    <span className="text-sm text-gray-600 font-medium">
-                      Click to upload or drag & drop
-                    </span>
-                    <span className="text-xs text-gray-400">
-                      Supported format: .pdf (Max 5MB)
-                    </span>
+                    <span className="text-sm text-gray-600 font-medium">Click to upload or drag & drop</span>
+                    <span className="text-xs text-gray-400">Supported format: .pdf (Max 5MB)</span>
                   </label>
                 </div>
               </div>
@@ -253,11 +255,7 @@ const ClaimRequest = () => {
                   disabled={loading}
                   className="btn flex-1 bg-green-600 hover:bg-green-700 text-white border-none"
                 >
-                  {loading ? (
-                    <Loading></Loading>
-                  ) : (
-                    "Submit Invoice"
-                  )}
+                  {loading ? <Loading /> : "Submit Invoice"}
                 </button>
               </div>
             </form>

@@ -4,6 +4,7 @@ import useAxiosPublic from "../../Hooks/UseAxiosPublic";
 import Loading from "../../SharedComponents/Loading/Loading";
 import AllPoliciesCard from "./AllPoiciesCard";
 import { FaFilter, FaSearch } from "react-icons/fa";
+import { ChevronLeft, ChevronRight } from "lucide-react"; // আইকন অ্যাড করা হয়েছে
 
 const AllPolicies = () => {
   const axiosPublic = useAxiosPublic();
@@ -23,13 +24,14 @@ const AllPolicies = () => {
   });
 
   const totalPages = Math.ceil((policiesData?.count || 0) / itemsPerPage);
+  const pages = [...Array(totalPages).keys()];
 
   if (isLoading) return <Loading />;
 
   return (
-    <div className="container mx-auto py-10">
+    <div className="container mx-auto py-10 px-4">
       {/* Search and Filter Section */}
-      <div className="bg-white p-6 rounded-4xl shadow-sm border border-gray-100 mb-10 mx-4">
+      <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 mb-10">
         <div className="flex flex-col md:flex-row items-center gap-6">
           {/* Search Input */}
           <div className="relative w-full md:flex-1">
@@ -66,15 +68,14 @@ const AllPolicies = () => {
 
         {/* Status Text */}
         <div className="mt-4 px-2">
-          <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">
-            Showing {policiesData?.result?.length || 0} of{" "}
-            {policiesData?.count || 0} Policies
+          <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">
+            Showing {policiesData?.result?.length || 0} of {policiesData?.count || 0} Policies
           </p>
         </div>
       </div>
 
       {/* Grid Section */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {policiesData?.result?.map((policy) => (
           <AllPoliciesCard key={policy._id} policy={policy} />
         ))}
@@ -87,27 +88,27 @@ const AllPolicies = () => {
         </div>
       )}
 
-      {/* --- PAGINATION CONTROLS --- */}
+      {/* --- PAGINATION CONTROLS (Matched Style) --- */}
       {totalPages > 1 && (
-        <div className="flex flex-wrap justify-center items-center gap-2 py-12">
-          {/* Prev Button */}
+        <div className="flex justify-center items-center gap-2 mt-16">
+          {/* Previous Button */}
           <button
             onClick={() => setCurrentPage(Math.max(0, currentPage - 1))}
             disabled={currentPage === 0}
-            className="btn btn-sm bg-white border-green-900 text-green-900 hover:bg-green-50 disabled:opacity-50 px-4 rounded-lg"
+            className="btn btn-sm bg-white border-gray-300 text-gray-600 hover:bg-gray-100 disabled:opacity-50 h-10 w-10 p-0 rounded-lg"
           >
-            Prev
+            <ChevronLeft size={18} />
           </button>
 
           {/* Page Numbers */}
-          {[...Array(totalPages).keys()].map((page) => (
+          {pages.map((page) => (
             <button
               key={page}
               onClick={() => setCurrentPage(page)}
-              className={`btn btn-sm border-green-900 transition-all px-4 rounded-lg ${
+              className={`btn btn-sm border-none transition-all h-10 px-4 rounded-lg ${
                 currentPage === page
-                  ? "bg-green-900 text-white hover:bg-[#00221d]"
-                  : "bg-white text-green-900 hover:bg-green-50"
+                  ? "bg-[#00332c] text-white"
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
               }`}
             >
               {page + 1}
@@ -118,9 +119,9 @@ const AllPolicies = () => {
           <button
             onClick={() => setCurrentPage(Math.min(totalPages - 1, currentPage + 1))}
             disabled={currentPage === totalPages - 1}
-            className="btn btn-xs bg-white border-green-900 text-green-900 hover:bg-green-50 disabled:opacity-50 px-4 rounded-lg"
+            className="btn btn-sm bg-white border-gray-300 text-gray-600 hover:bg-gray-100 disabled:opacity-50 h-10 w-10 p-0 rounded-lg"
           >
-            Next
+            <ChevronRight size={18} />
           </button>
         </div>
       )}
