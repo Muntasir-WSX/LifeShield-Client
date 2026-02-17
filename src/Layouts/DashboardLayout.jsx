@@ -4,6 +4,7 @@ import { CreditCard, FileText, Home, ShieldCheck, UserCircle, Menu, X, LayoutDas
 import LifeShieldLogo from '../SharedComponents/LifeShieldLogo/LifeShieldLogo';
 import Loading from '../SharedComponents/Loading/Loading';
 import useRole from '../Hooks/useRole';
+import { Helmet } from 'react-helmet-async';
 
 const DashboardLayout = () => {
     const [userRole, isRoleLoading] = useRole();
@@ -113,6 +114,10 @@ const DashboardLayout = () => {
 
     return (
         <div className="drawer lg:drawer-open min-h-screen bg-[#f3f4f6]">
+              <Helmet>
+                          <title> Your Dashboard | Life Shield - Secure Your Tomorrow</title>
+                          <meta name="description" content="Welcome to Life Shield. Explore our popular insurance policies, meet our expert agents, and stay updated with our latest health and life articles." />
+                  </Helmet>
             <input id="dashboard-drawer" type="checkbox" className="drawer-toggle" />
             
             <div className="drawer-content flex flex-col">
@@ -142,23 +147,21 @@ const DashboardLayout = () => {
                                 </p>
                             </div>
                         </div>
-
-                        {/* --- ডাইনামিক পেজ রেন্ডার করার জন্য Outlet --- */}
-                        <div className="bg-white rounded-[2rem] p-6 md:p-10 shadow-xl shadow-gray-200/50 border border-gray-100 min-h-[70vh]">
+                        <div className="bg-white rounded-4xl p-6 md:p-10 shadow-xl shadow-gray-200/50 border border-gray-100 min-h-[70vh]">
                             <Outlet />
                         </div>
                     </div>
                 </main>
             </div> 
 
-            <div className="drawer-side z-[50]">
+            <div className="drawer-side z-50">
                 <label htmlFor="dashboard-drawer" aria-label="close sidebar" className="drawer-overlay"></label>
                 
                 <div className="min-h-full w-72 bg-[#00332c] text-white flex flex-col overflow-hidden relative">
-                    <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-black/20 to-transparent pointer-events-none"></div>
+                    <div className="absolute top-0 left-0 w-full h-full bg-linear-to-b from-black/20 to-transparent pointer-events-none"></div>
 
                     <div className="p-6 relative">
-                        <div className="bg-white p-4 rounded-[1.5rem] shadow-2xl flex items-center justify-center border border-white/20">
+                        <div className="bg-white p-4 rounded-3xl shadow-2xl flex items-center justify-center border border-white/20">
                             <LifeShieldLogo />
                         </div>
                         

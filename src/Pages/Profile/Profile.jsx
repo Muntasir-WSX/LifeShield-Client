@@ -1,22 +1,22 @@
-import React, { useEffect, useState } from 'react'; // useEffect যোগ করা হয়েছে
+import React, { useEffect, useState } from 'react'; 
 import useAuth from '../../Hooks/useAuth';
 import useAxiosPublic from '../../Hooks/UseAxiosPublic';
 import Swal from 'sweetalert2';
 import { updateProfile } from 'firebase/auth';
 import { FaUserEdit, FaEnvelope, FaClock, FaIdBadge } from 'react-icons/fa';
+import Loading from '../../SharedComponents/Loading/Loading';
+import { Helmet } from 'react-helmet-async';
 
 const Profile = () => {
     const { user, loading } = useAuth();
     const axiosPublic = useAxiosPublic();
     const [isEditing, setIsEditing] = useState(false);
-    const [userRole, setUserRole] = useState("Loading..."); // ডায়নামিক রোলের জন্য স্টেট
+    const [userRole, setUserRole] = useState("Loading..."); 
 
-    // ডায়নামিক রোল ফেচ করার জন্য useEffect
     useEffect(() => {
         if (user?.email) {
             axiosPublic.get(`/users/role/${user.email}`)
                 .then(res => {
-                    // যদি ডাটাবেসে রোল থাকে তবে সেটি সেট করবে, নাহলে 'Customer'
                     setUserRole(res.data?.role || "Customer");
                 })
                 .catch(() => {
@@ -48,10 +48,14 @@ const Profile = () => {
         }
     };
 
-    if (loading) return <div className="text-center py-20">Loading Profile...</div>;
+    if (loading) return <Loading></Loading>
 
     return (
         <div className="min-h-screen bg-gray-50 py-12 px-4">
+              <Helmet>
+                          <title> Manage Your Profile | Life Shield - Secure Your Tomorrow</title>
+                          <meta name="description" content="Welcome to Life Shield. Explore our popular insurance policies, meet our expert agents, and stay updated with our latest health and life articles." />
+                  </Helmet>
             <div className="max-w-3xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100">
                 {/* Header Section */}
                 <div className="bg-[#00332c] h-32 relative">

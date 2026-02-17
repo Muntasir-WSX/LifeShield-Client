@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { FaCalendarAlt, FaUserEdit, FaChevronLeft, FaEye, FaAward } from "react-icons/fa";
 import useAxiosPublic from "../../../Hooks/UseAxiosPublic";
 import Loading from "../../../SharedComponents/Loading/Loading";
+import { Helmet } from "react-helmet-async";
 
 const ArticleDetails = () => {
   const { id } = useParams();
@@ -21,6 +22,10 @@ const ArticleDetails = () => {
 
   return (
     <div className="min-h-screen bg-[#f8fafc] pb-20 pt-10">
+        <Helmet>
+                    <title> Article | Life Shield - Secure Your Tomorrow</title>
+                    <meta name="description" content="Welcome to Life Shield. Explore our popular insurance policies, meet our expert agents, and stay updated with our latest health and life articles." />
+            </Helmet>
       <div className="container mx-auto px-4 max-w-5xl">
         {/* Back Button */}
         <Link

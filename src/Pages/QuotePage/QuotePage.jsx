@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import useAxiosPublic from '../../Hooks/UseAxiosPublic';
 import { FaCalculator, FaInfoCircle } from 'react-icons/fa';
 import Loading from '../../SharedComponents/Loading/Loading';
+import { Helmet } from 'react-helmet-async';
 
 const QuotePage = () => {
     const { id } = useParams();
@@ -53,7 +54,10 @@ const { data: allPolicies = [], isLoading } = useQuery({
     return (
         <div className="min-h-screen bg-[#f8fafc] py-12 px-4">
             <div className="max-w-5xl mx-auto bg-white rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col lg:flex-row border border-gray-100">
-                
+                  <Helmet>
+                              <title> Quote | Life Shield - Secure Your Tomorrow</title>
+                              <meta name="description" content="Welcome to Life Shield. Explore our popular insurance policies, meet our expert agents, and stay updated with our latest health and life articles." />
+                      </Helmet>
                 {/* --- Left Side: Form --- */}
                 <div className="p-8 lg:p-12 lg:w-3/5 space-y-8">
                     <div className="flex items-center gap-3">

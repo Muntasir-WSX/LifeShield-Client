@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { FaCheckCircle, FaInfoCircle, FaCalculator, FaShieldAlt } from 'react-icons/fa';
 import useAxiosPublic from '../../Hooks/UseAxiosPublic';
 import Loading from '../../SharedComponents/Loading/Loading';
+import { Helmet } from 'react-helmet-async';
 
 
 const AllPoliciesDetails = () => {
@@ -23,6 +24,10 @@ const AllPoliciesDetails = () => {
 
     return (
         <div className="min-h-screen bg-[#f8fafc] py-12 px-4">
+              <Helmet>
+                          <title> All Policies Details | Life Shield - Secure Your Tomorrow</title>
+                          <meta name="description" content="Welcome to Life Shield. Explore our popular insurance policies, meet our expert agents, and stay updated with our latest health and life articles." />
+                  </Helmet>
             <div className="container mx-auto max-w-6xl">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
                     

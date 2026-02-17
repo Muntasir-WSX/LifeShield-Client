@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import useAuth from "../../Hooks/useAuth";
 import useAxiosPublic from "../../Hooks/UseAxiosPublic";
 import Swal from "sweetalert2";
+import { Helmet } from "react-helmet-async";
 
 const QuoteApplicationFrom = () => {
   const { user } = useAuth();
@@ -57,6 +58,10 @@ const QuoteApplicationFrom = () => {
 
   return (
     <div className="max-w-4xl mx-auto my-10 p-6 md:p-12 bg-white shadow-2xl rounded-[3rem] border border-gray-50">
+        <Helmet>
+                    <title> Apply Policy | Life Shield - Secure Your Tomorrow</title>
+                    <meta name="description" content="Welcome to Life Shield. Explore our popular insurance policies, meet our expert agents, and stay updated with our latest health and life articles." />
+            </Helmet>
       {/* Header */}
       <div className="text-center mb-14">
         <div className="inline-block px-5 py-2 mb-4 text-[10px] font-bold tracking-[0.2em] text-green-700 uppercase bg-green-50 rounded-full border border-green-100">
