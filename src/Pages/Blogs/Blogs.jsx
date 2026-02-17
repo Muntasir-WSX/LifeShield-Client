@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { FaCalendarAlt, FaArrowRight, FaUser } from 'react-icons/fa';
 import useAxiosPublic from '../../Hooks/UseAxiosPublic';
 import Loading from '../../SharedComponents/Loading/Loading';
+import { Helmet } from 'react-helmet-async';
 
 const Blogs = () => {
     const axiosPublic = useAxiosPublic();
@@ -24,6 +25,10 @@ const Blogs = () => {
 
     return (
         <section className="py-20 bg-[#f8fafc] min-h-screen">
+              <Helmet>
+                          <title> Blogs  | Life Shield - Secure Your Tomorrow</title>
+                          <meta name="description" content="Welcome to Life Shield. Explore our popular insurance policies, meet our expert agents, and stay updated with our latest health and life articles." />
+                  </Helmet>
             <div className="container mx-auto px-4">
                 {/* Title */}
                 <div className="mb-16">
@@ -36,7 +41,7 @@ const Blogs = () => {
                 {/* Blog Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
                     {allBlogs.map((blog) => (
-                        <div key={blog._id} className="bg-white rounded-[2rem] overflow-hidden border border-gray-100 hover:shadow-2xl transition-all duration-500 flex flex-col group">
+                        <div key={blog._id} className="bg-white rounded-4xl overflow-hidden border border-gray-100 hover:shadow-2xl transition-all duration-500 flex flex-col group">
                             {/* Image Section */}
                             <div className="relative h-64 overflow-hidden">
                                 <img 
@@ -51,7 +56,7 @@ const Blogs = () => {
                             </div>
 
                             {/* Content Section */}
-                            <div className="p-8 flex flex-col flex-grow">
+                            <div className="p-8 flex flex-col grow">
                                 <div className="flex items-center gap-2 text-green-600 text-xs font-bold uppercase tracking-widest mb-3">
                                     <FaUser size={10} /> {blog.author || "Expert Agent"}
                                 </div>
@@ -60,7 +65,7 @@ const Blogs = () => {
                                     {blog.title}
                                 </h3>
                                 
-                                <p className="text-gray-500 line-clamp-3 mb-6 flex-grow">
+                                <p className="text-gray-500 line-clamp-3 mb-6 grow">
                                     {blog.summary}
                                 </p>
 

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { History, Target, Trophy, Users, ShieldCheck } from "lucide-react";
+import { Helmet } from "react-helmet-async";
 
 
 const AboutUs = () => {
@@ -99,11 +100,10 @@ const AboutUs = () => {
 
   return (
     <div className="max-w-7xl mx-auto p-6 md:p-12 bg-white rounded-[40px] shadow-sm border border-gray-100 mt-10">
-      {/* <Helmet>
-        <title>LifeShield | About Us</title>
-      </Helmet> */}
-
-      {/* Header */}
+      <Helmet>
+                  <title> About Us | Life Shield - Secure Your Tomorrow</title>
+                  <meta name="description" content="Welcome to Life Shield. Explore our popular insurance policies, meet our expert agents, and stay updated with our latest health and life articles." />
+          </Helmet>
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-16 gap-6">
         <div>
           <h2 className="text-5xl md:text-6xl font-black text-[#00332c] mb-4 tracking-tighter uppercase">
@@ -144,7 +144,7 @@ const AboutUs = () => {
       </div>
 
       {/* Dynamic Content Area */}
-      <div className="min-h-[500px]">
+      <div className="min-h-125">
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}

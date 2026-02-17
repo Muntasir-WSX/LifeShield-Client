@@ -6,6 +6,7 @@ import Articles from "./Article/Articles";
 import PopularPolicies from "./PopularPolicies/PopularPolicies";
 import Testimonials from "./Testimonials/Testimonials";
 import Newsletter from "./Newsletter/Newsletter";
+import { Helmet } from "react-helmet-async";
 
 const Home = () => {
   const fadeInUp = {
@@ -29,6 +30,10 @@ const Home = () => {
 
   return (
     <div className="overflow-hidden">
+      <Helmet>
+        <title>Home | Life Shield - Secure Your Tomorrow</title>
+        <meta name="description" content="Welcome to Life Shield. Explore our popular insurance policies, meet our expert agents, and stay updated with our latest health and life articles." />
+      </Helmet>
       <motion.section
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}

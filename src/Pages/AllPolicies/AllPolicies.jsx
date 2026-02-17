@@ -4,7 +4,8 @@ import useAxiosPublic from "../../Hooks/UseAxiosPublic";
 import Loading from "../../SharedComponents/Loading/Loading";
 import AllPoliciesCard from "./AllPoiciesCard";
 import { FaFilter, FaSearch } from "react-icons/fa";
-import { ChevronLeft, ChevronRight } from "lucide-react"; // আইকন অ্যাড করা হয়েছে
+import { ChevronLeft, ChevronRight } from "lucide-react"; 
+import { Helmet } from "react-helmet-async";
 
 const AllPolicies = () => {
   const axiosPublic = useAxiosPublic();
@@ -30,6 +31,10 @@ const AllPolicies = () => {
 
   return (
     <div className="container mx-auto py-10 px-4">
+      <Helmet>
+              <title> All Policies | Life Shield - Secure Your Tomorrow</title>
+              <meta name="description" content="Welcome to Life Shield. Explore our popular insurance policies, meet our expert agents, and stay updated with our latest health and life articles." />
+      </Helmet>
       {/* Search and Filter Section */}
       <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 mb-10">
         <div className="flex flex-col md:flex-row items-center gap-6">
