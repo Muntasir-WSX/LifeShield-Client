@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { CreditCard, CheckCircle, Clock, Download } from "lucide-react";
+import { CreditCard, CheckCircle, Clock, Download, ChevronLeft, ChevronRight } from "lucide-react";
 import useAxiosSecure from "../../../Hooks/UseAxiosSecure";
 import useAuth from "../../../Hooks/useAuth";
 import { useReactToPrint } from "react-to-print";
@@ -8,20 +8,31 @@ import Invoice from "./Invoice";
 
 const PaymentStatus = () => {
   const [policies, setPolicies] = useState([]);
+  const [totalCount, setTotalCount] = useState(0);
+  const [currentPage, setCurrentPage] = useState(0);
+  const itemsPerPage = 5; // প্রতি পেজে কয়টা দেখাবে
+  
   const [selectedPolicy, setSelectedPolicy] = useState(null);
   const navigate = useNavigate();
   const axiosSecure = useAxiosSecure();
   const { user } = useAuth();
   const invoiceRef = useRef(null);
 
+  // প্যাগিনেশন ক্যালকুলেশন
+  const numberOfPages = Math.ceil(totalCount / itemsPerPage);
+  const pages = [...Array(numberOfPages).keys()];
+
   useEffect(() => {
     if (user?.email) {
       axiosSecure
-        .get(`/my-approved-policies/${user.email}`)
-        .then((res) => setPolicies(res.data))
+        .get(`/my-approved-policies/${user.email}?page=${currentPage}&size=${itemsPerPage}`)
+        .then((res) => {
+          setPolicies(res.data.result);
+          setTotalCount(res.data.count);
+        })
         .catch((err) => console.error(err));
     }
-  }, [user?.email, axiosSecure]);
+  }, [user?.email, axiosSecure, currentPage]);
 
   const handlePrint = useReactToPrint({
     contentRef: invoiceRef,
@@ -59,10 +70,7 @@ const PaymentStatus = () => {
           </thead>
           <tbody>
             {policies.map((policy) => (
-              <tr
-                key={policy._id}
-                className="border-b hover:bg-gray-50 transition-colors"
-              >
+              <tr key={policy._id} className="border-b hover:bg-gray-50 transition-colors">
                 <td className="p-4">
                   <div className="font-bold">{policy.policyTitle}</div>
                   <div className="text-[10px] opacity-50 uppercase font-mono">
@@ -85,14 +93,12 @@ const PaymentStatus = () => {
                 </td>
                 <td className="p-4 text-center">
                   {policy.paymentStatus === "Paid" ? (
-                    <div className="flex flex-col items-center gap-2">
-                      <button
-                        onClick={() => handleDownloadClick(policy)}
-                        className="btn btn-xs bg-[#00332c] text-white hover:bg-black rounded-lg px-3 flex items-center gap-1 border-none"
-                      >
-                        <Download size={12} /> Receipt
-                      </button>
-                    </div>
+                    <button
+                      onClick={() => handleDownloadClick(policy)}
+                      className="btn btn-xs bg-[#00332c] text-white hover:bg-black rounded-lg px-3 border-none"
+                    >
+                      <Download size={12} className="mr-1" /> Receipt
+                    </button>
                   ) : (
                     <button
                       onClick={() =>
@@ -117,6 +123,41 @@ const PaymentStatus = () => {
           </div>
         )}
       </div>
+
+      {/* --- PAGINATION CONTROLS --- */}
+      {totalCount > itemsPerPage && (
+        <div className="flex justify-center items-center gap-2 mt-8">
+          <button
+            onClick={() => setCurrentPage(Math.max(0, currentPage - 1))}
+            disabled={currentPage === 0}
+            className="btn btn-sm bg-white border-gray-300 text-gray-600 hover:bg-gray-100 disabled:opacity-50"
+          >
+            <ChevronLeft size={16} />
+          </button>
+          
+          {pages.map((page) => (
+            <button
+              key={page}
+              onClick={() => setCurrentPage(page)}
+              className={`btn btn-sm border-none transition-all ${
+                currentPage === page
+                  ? "bg-[#00332c] text-white"
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              }`}
+            >
+              {page + 1}
+            </button>
+          ))}
+
+          <button
+            onClick={() => setCurrentPage(Math.min(numberOfPages - 1, currentPage + 1))}
+            disabled={currentPage === numberOfPages - 1}
+            className="btn btn-sm bg-white border-gray-300 text-gray-600 hover:bg-gray-100 disabled:opacity-50"
+          >
+            <ChevronRight size={16} />
+          </button>
+        </div>
+      )}
     </div>
   );
 };
