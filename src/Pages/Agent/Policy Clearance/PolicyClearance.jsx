@@ -12,7 +12,6 @@ const PolicyClearance = () => {
     const queryClient = useQueryClient();
     const [selectedPolicy, setSelectedPolicy] = useState(null);
 
-    // ১. পলিসি ডাটা ফেচ করা
     const { data: claims = [], isLoading } = useQuery({
         queryKey: ['claim-policies', user?.email],
         queryFn: async () => {
@@ -21,7 +20,6 @@ const PolicyClearance = () => {
         }
     });
 
-    // ২. অ্যাপ্রুভ মিউটেশন
     const approveMutation = useMutation({
         mutationFn: async (id) => {
             return await axiosSecure.patch(`/applications/approve-claim/${id}`);
@@ -41,6 +39,10 @@ const PolicyClearance = () => {
 
     return (
         <div className="p-6">
+            <Helmet>
+                                      <title> Your Clearence | Life Shield - Secure Your Tomorrow</title>
+                                      <meta name="description" content="Welcome to Life Shield. Explore our popular insurance policies, meet our expert agents, and stay updated with our latest health and life articles." />
+                              </Helmet>
             <div className="bg-white p-8 rounded-[2.5rem] shadow-sm mb-6 flex items-center gap-4">
                 <div className="p-3 bg-blue-50 text-blue-600 rounded-2xl">
                     <ShieldCheck size={32} />
@@ -92,7 +94,7 @@ const PolicyClearance = () => {
 
             {/* Details Modal */}
             <dialog id="details_modal" className="modal">
-                <div className="modal-box rounded-[2rem] p-10 max-w-lg">
+                <div className="modal-box rounded-4xl p-10 max-w-lg">
                     <h3 className="font-black text-2xl text-[#00332c] mb-4">Claim Details</h3>
                     {selectedPolicy && (
                         <div className="space-y-3">

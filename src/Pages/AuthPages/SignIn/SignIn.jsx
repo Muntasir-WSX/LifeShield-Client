@@ -8,6 +8,7 @@ import { motion } from "framer-motion";
 import { Link, useLocation, useNavigate } from "react-router-dom"; 
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { Helmet } from "react-helmet-async";
 
 const SignIn = () => {
   const { signIn, googleSignIn } = useAuth();
@@ -71,6 +72,10 @@ const SignIn = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#f0f4f3] p-4 md:p-10">
+      <Helmet>
+                                <title> Sign In | Life Shield - Secure Your Tomorrow</title>
+                                <meta name="description" content="Welcome to Life Shield. Explore our popular insurance policies, meet our expert agents, and stay updated with our latest health and life articles." />
+                        </Helmet>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

@@ -5,12 +5,13 @@ import useAxiosSecure from "../../../Hooks/UseAxiosSecure";
 import useAuth from "../../../Hooks/useAuth";
 import { useReactToPrint } from "react-to-print";
 import Invoice from "./Invoice";
+import { Helmet } from "react-helmet-async";
 
 const PaymentStatus = () => {
   const [policies, setPolicies] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
-  const itemsPerPage = 5; // প্রতি পেজে কয়টা দেখাবে
+  const itemsPerPage = 5; 
   
   const [selectedPolicy, setSelectedPolicy] = useState(null);
   const navigate = useNavigate();
@@ -18,7 +19,7 @@ const PaymentStatus = () => {
   const { user } = useAuth();
   const invoiceRef = useRef(null);
 
-  // প্যাগিনেশন ক্যালকুলেশন
+
   const numberOfPages = Math.ceil(totalCount / itemsPerPage);
   const pages = [...Array(numberOfPages).keys()];
 
@@ -47,6 +48,10 @@ const PaymentStatus = () => {
 
   return (
     <div className="p-6">
+        <Helmet>
+                    <title> Your Payments | Life Shield - Secure Your Tomorrow</title>
+                    <meta name="description" content="Welcome to Life Shield. Explore our popular insurance policies, meet our expert agents, and stay updated with our latest health and life articles." />
+            </Helmet>
       <div style={{ display: "none" }}>
         {selectedPolicy && <Invoice ref={invoiceRef} data={selectedPolicy} />}
       </div>

@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import useAxiosSecure from "../../../Hooks/UseAxiosSecure";
 import Loading from "../../../SharedComponents/Loading/Loading";
+import { Helmet } from "react-helmet-async";
 
 const ManageApplications = () => {
   const axiosSecure = useAxiosSecure();
@@ -97,6 +98,10 @@ const ManageApplications = () => {
 
   return (
     <div className="p-6 space-y-6">
+        <Helmet>
+                    <title> Manage All Applications | Life Shield - Secure Your Tomorrow</title>
+                    <meta name="description" content="Welcome to Life Shield. Explore our popular insurance policies, meet our expert agents, and stay updated with our latest health and life articles." />
+            </Helmet>
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h2 className="text-2xl font-black text-[#00332c]">Manage Applications</h2>

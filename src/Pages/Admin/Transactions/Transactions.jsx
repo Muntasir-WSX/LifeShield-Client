@@ -4,6 +4,7 @@ import { DollarSign, Calendar, Filter, Search, ChevronLeft, ChevronRight, Receip
 import { AreaChart, Area, ResponsiveContainer, XAxis, Tooltip } from 'recharts';
 import useAxiosSecure from '../../../Hooks/UseAxiosSecure';
 import Loading from '../../../SharedComponents/Loading/Loading';
+import { Helmet } from 'react-helmet-async';
 
 const Transactions = () => {
     const axiosSecure = useAxiosSecure();
@@ -32,6 +33,10 @@ const Transactions = () => {
 
     return (
         <div className="space-y-8 p-2">
+            <Helmet>
+                                      <title> Manage Transactions | Life Shield - Secure Your Tomorrow</title>
+                                      <meta name="description" content="Welcome to Life Shield. Explore our popular insurance policies, meet our expert agents, and stay updated with our latest health and life articles." />
+                              </Helmet>
             {/* Header & Search Section */}
             <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
                 <div>

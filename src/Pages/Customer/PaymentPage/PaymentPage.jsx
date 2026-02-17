@@ -4,6 +4,7 @@ import { ShieldCheck } from 'lucide-react';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import CheckoutForm from './CheckoutForm';
+import { Helmet } from 'react-helmet-async';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
@@ -16,6 +17,10 @@ const PaymentPage = () => {
 
     return (
         <div className="max-w-2xl mx-auto py-6 md:py-10 px-4">
+              <Helmet>
+                          <title> Pay for Life | Life Shield - Secure Your Tomorrow</title>
+                          <meta name="description" content="Welcome to Life Shield. Explore our popular insurance policies, meet our expert agents, and stay updated with our latest health and life articles." />
+                  </Helmet>
             <div className="bg-white p-6 md:p-10 rounded-3xl md:rounded-[2.5rem] shadow-xl md:shadow-2xl border border-gray-100 text-center">
                 <div className="w-16 h-16 md:w-20 md:h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4 md:mb-6">
                     <ShieldCheck size={32} className="md:w-10 md:h-10" />

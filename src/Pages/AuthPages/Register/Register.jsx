@@ -9,6 +9,7 @@ import useAuth from "../../../Hooks/useAuth";
 import useAxiosPublic from "../../../Hooks/UseAxiosPublic";
 import LifeShieldLogo from "../../../SharedComponents/LifeShieldLogo/LifeShieldLogo";
 import toast from "react-hot-toast";
+import { Helmet } from "react-helmet-async";
 
 const Register = () => {
   const { createUser, updateUserProfile, googleSignIn } = useAuth();
@@ -91,6 +92,10 @@ const Register = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#f0f4f3] p-4 md:p-10">
+      <Helmet>
+                                <title> Register | Life Shield - Secure Your Tomorrow</title>
+                                <meta name="description" content="Welcome to Life Shield. Explore our popular insurance policies, meet our expert agents, and stay updated with our latest health and life articles." />
+                        </Helmet>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

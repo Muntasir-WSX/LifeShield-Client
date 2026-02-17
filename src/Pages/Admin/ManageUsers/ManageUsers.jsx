@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Trash2, UserPlus, ShieldCheck } from 'lucide-react'; 
 import Swal from 'sweetalert2';
 import useAxiosSecure from '../../../Hooks/UseAxiosSecure';
+import { Helmet } from 'react-helmet-async';
 
 const ManageUsers = () => {
     const axiosSecure = useAxiosSecure();
@@ -33,6 +34,10 @@ const ManageUsers = () => {
 
     return (
         <div className="bg-white p-4 md:p-6 rounded-2xl md:rounded-3xl shadow-sm border border-gray-100">
+              <Helmet>
+                          <title> Manage Users | Life Shield - Secure Your Tomorrow</title>
+                          <meta name="description" content="Welcome to Life Shield. Explore our popular insurance policies, meet our expert agents, and stay updated with our latest health and life articles." />
+                  </Helmet>
             {/* Header Section - Responsive Flex */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
                 <div>

@@ -5,6 +5,7 @@ import Swal from 'sweetalert2';
 import useAxiosSecure from '../../../Hooks/UseAxiosSecure';
 import useAuth from '../../../Hooks/useAuth';
 import Loading from '../../../SharedComponents/Loading/Loading';
+import { Helmet } from 'react-helmet-async';
 
 const MyBlogs = () => {
     const { user } = useAuth();
@@ -117,6 +118,10 @@ const MyBlogs = () => {
 
     return (
         <div className="p-6">
+            <Helmet>
+                                      <title> Your Blogs | Life Shield - Secure Your Tomorrow</title>
+                                      <meta name="description" content="Welcome to Life Shield. Explore our popular insurance policies, meet our expert agents, and stay updated with our latest health and life articles." />
+                              </Helmet>
             {uploading && (
                 <div className="fixed inset-0 z-9999 bg-white/60 backdrop-blur-sm flex flex-col items-center justify-center">
                     <Loader2 className="animate-spin text-[#00332c]" size={50} />

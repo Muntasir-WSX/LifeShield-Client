@@ -13,6 +13,7 @@ import Swal from "sweetalert2";
 import useAuth from "../../../Hooks/useAuth";
 import useAxiosSecure from "../../../Hooks/UseAxiosSecure";
 import Loading from "../../../SharedComponents/Loading/Loading";
+import { Helmet } from "react-helmet-async";
 
 const MyPolicies = () => {
   const { user } = useAuth();
@@ -75,6 +76,10 @@ const MyPolicies = () => {
 
   return (
     <div className="p-6 space-y-6">
+        <Helmet>
+                    <title> My Policies | Life Shield - Secure Your Tomorrow</title>
+                    <meta name="description" content="Welcome to Life Shield. Explore our popular insurance policies, meet our expert agents, and stay updated with our latest health and life articles." />
+            </Helmet>
       {/* Header Section */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>

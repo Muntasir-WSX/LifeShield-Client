@@ -4,6 +4,8 @@ import Swal from "sweetalert2";
 import { Info, CheckCircle, XCircle, Clock, ChevronLeft, ChevronRight } from "lucide-react";
 import useAxiosSecure from "../../../Hooks/UseAxiosSecure";
 import useAuth from "../../../Hooks/useAuth";
+import Loading from "../../../SharedComponents/Loading/Loading";
+import { Helmet } from "react-helmet-async";
 
 const AssignedCustomers = () => {
   const { user } = useAuth();
@@ -73,13 +75,17 @@ const AssignedCustomers = () => {
   if (isLoading)
     return (
       <div className="flex flex-col justify-center items-center h-64 space-y-4">
-        <span className="loading loading-spinner loading-lg text-[#00332c]"></span>
-        <p className="text-gray-500 font-medium animate-pulse">Fetching assignments...</p>
+        <Loading></Loading>
+        <p className="text-gray-500 font-medium animate-pulse">Fetching Customers...</p>
       </div>
     );
 
   return (
     <div className="p-6 space-y-6">
+      <Helmet>
+                                <title> Assign Your Customer | Life Shield - Secure Your Tomorrow</title>
+                                <meta name="description" content="Welcome to Life Shield. Explore our popular insurance policies, meet our expert agents, and stay updated with our latest health and life articles." />
+                        </Helmet>
       <div className="flex flex-col">
         <h2 className="text-3xl font-black text-[#00332c]">Assigned Customers</h2>
         <p className="text-gray-500 text-sm">Review and finalize policy applications assigned to you.</p>

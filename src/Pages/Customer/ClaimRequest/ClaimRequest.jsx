@@ -4,6 +4,7 @@ import Swal from "sweetalert2";
 import useAxiosSecure from "../../../Hooks/UseAxiosSecure";
 import useAuth from "../../../Hooks/useAuth";
 import Loading from "../../../SharedComponents/Loading/Loading";
+import { Helmet } from "react-helmet-async";
 
 const ClaimRequest = () => {
   const { user } = useAuth();
@@ -15,8 +16,6 @@ const ClaimRequest = () => {
 
   const [selectedPolicy, setSelectedPolicy] = useState(null);
   const [loading, setLoading] = useState(false);
-
-  // প্যাগিনেশন ক্যালকুলেশন
   const numberOfPages = Math.ceil(totalCount / itemsPerPage);
   const pages = [...Array(numberOfPages).keys()];
 
@@ -50,7 +49,7 @@ const ClaimRequest = () => {
     }
 
     try {
-      // এখানে আপাতত একটি হার্ডকোডেড লিঙ্ক দেওয়া হয়েছে, তুই তোর আপলোড লজিক বসাতে পারিস
+     
       const claimData = {
         claimStatus: "Pending",
         claimReason: reason,
@@ -82,6 +81,10 @@ const ClaimRequest = () => {
 
   return (
     <div className="p-6">
+        <Helmet>
+                    <title> Claim Request | Life Shield - Secure Your Tomorrow</title>
+                    <meta name="description" content="Welcome to Life Shield. Explore our popular insurance policies, meet our expert agents, and stay updated with our latest health and life articles." />
+            </Helmet>
       {/* Header Section */}
       <div className="mb-6">
         <h3 className="text-xl font-bold text-[#00332c]">Claim & Invoices</h3>
