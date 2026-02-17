@@ -3,7 +3,6 @@ import { useQuery } from "@tanstack/react-query";
 import {
   Star,
   MessageSquare,
-  CheckCircle,
   Info,
   Clock,
   ShieldCheck,
@@ -18,19 +17,26 @@ const MyPolicies = () => {
   const axiosSecure = useAxiosSecure();
   const [selectedPolicy, setSelectedPolicy] = useState(null);
   const [detailsPolicy, setDetailsPolicy] = useState(null);
+  const [currentPage, setCurrentPage] = useState(0);
+  const itemsPerPage = 5;
 
   const {
-    data: myAppliedPolicies = [],
+    data: { result: myAppliedPolicies = [], count = 0 } = {},
     refetch,
     isLoading,
   } = useQuery({
-    queryKey: ["my-policies", user?.email],
+    queryKey: ["my-policies", user?.email, currentPage],
     enabled: !!user?.email,
     queryFn: async () => {
-      const res = await axiosSecure.get(`/applied-policies/${user?.email}`);
+      const res = await axiosSecure.get(
+        `/applied-policies/${user?.email}?page=${currentPage}&size=${itemsPerPage}`
+      );
       return res.data;
     },
   });
+
+  const numberOfPages = Math.ceil(count / itemsPerPage);
+  const pages = [...Array(numberOfPages).keys()];
 
   const handleReviewSubmit = async (e) => {
     e.preventDefault();
@@ -39,11 +45,11 @@ const MyPolicies = () => {
     const feedback = form.feedback.value;
 
     const reviewData = {
-      name: user?.displayName, 
-      image: user?.photoURL || "https://i.ibb.co.com/8mX1C9T/user.png", 
+      name: user?.displayName,
+      image: user?.photoURL || "https://i.ibb.co.com/8mX1C9T/user.png",
       policyTitle: selectedPolicy?.policyTitle,
       rating: parseInt(rating),
-      message: feedback, // feedback এর বদলে message
+      message: feedback,
       date: new Date().toISOString(),
     };
 
@@ -66,12 +72,9 @@ const MyPolicies = () => {
 
   if (isLoading)
     return (
-      <div className="flex flex-col items-center justify-center py-20">
-        <Loading></Loading>
-        <p className="mt-4 font-bold text-[#00332c]">
-          Loading your policies...
-        </p>
-      </div>
+      
+        <Loading />
+  
     );
 
   return (
@@ -88,7 +91,7 @@ const MyPolicies = () => {
         </div>
         <div className="flex items-center gap-2 px-4 py-2 bg-green-50 text-green-700 rounded-full font-bold text-sm border border-green-100">
           <ShieldCheck size={16} />
-          Total Policies: {myAppliedPolicies.length}
+          Total Policies: {count}
         </div>
       </div>
 
@@ -127,19 +130,18 @@ const MyPolicies = () => {
                       TXN: {policy.transactionId || "Processing..."}
                     </div>
                   </td>
-
                   <td>
                     <span
                       className={`badge badge-sm font-bold p-3 border-none ${
                         policy.status === "Assigned"
                           ? "bg-blue-100 text-blue-700"
                           : policy.status === "Awaiting Approval"
-                            ? "bg-orange-100 text-orange-700 animate-pulse"
-                            : policy.status === "Approved"
-                              ? "bg-emerald-100 text-emerald-700"
-                              : policy.status === "Rejected"
-                                ? "bg-red-100 text-red-700"
-                                : "bg-gray-100 text-gray-600"
+                          ? "bg-orange-100 text-orange-700 animate-pulse"
+                          : policy.status === "Approved"
+                          ? "bg-emerald-100 text-emerald-700"
+                          : policy.status === "Rejected"
+                          ? "bg-red-100 text-red-700"
+                          : "bg-gray-100 text-gray-600"
                       }`}
                     >
                       {policy.status === "Awaiting Approval" && (
@@ -148,15 +150,12 @@ const MyPolicies = () => {
                       {policy.status || "Paid"}
                     </span>
                   </td>
-
                   <td>
                     <div className="font-bold text-green-600">
                       ৳{(policy.amount || policy.paidAmount)?.toLocaleString()}
                     </div>
                     <div className="text-[10px] text-gray-400 font-medium">
-                      {policy.date
-                        ? new Date(policy.date).toLocaleDateString()
-                        : "Just Now"}
+                      {policy.date ? new Date(policy.date).toLocaleDateString() : "Just Now"}
                     </div>
                   </td>
                   <td className="text-right px-6">
@@ -170,8 +169,7 @@ const MyPolicies = () => {
                       >
                         <Info size={14} /> Details
                       </button>
-                      {(policy.status === "Approved" ||
-                        policy.status === "Assigned") && (
+                      {(policy.status === "Approved" || policy.status === "Assigned") && (
                         <button
                           onClick={() => {
                             setSelectedPolicy(policy);
@@ -191,6 +189,39 @@ const MyPolicies = () => {
         </table>
       </div>
 
+      {/* --- PAGINATION --- */}
+      {count > itemsPerPage && (
+        <div className="flex flex-wrap justify-center items-center gap-2 py-4">
+          <button
+            onClick={() => setCurrentPage(Math.max(0, currentPage - 1))}
+            disabled={currentPage === 0}
+            className="btn btn-sm bg-white border-green-900 text-green-900 hover:bg-green-50 disabled:opacity-50"
+          >
+            Prev
+          </button>
+          {pages.map((page) => (
+            <button
+              key={page}
+              onClick={() => setCurrentPage(page)}
+              className={`btn btn-sm border-green-900 transition-all ${
+                currentPage === page
+                  ? "bg-green-900 text-white hover:bg-[#00221d]"
+                  : "bg-white text-green-900 hover:bg-green-50"
+              }`}
+            >
+              {page + 1}
+            </button>
+          ))}
+          <button
+            onClick={() => setCurrentPage(Math.min(numberOfPages - 1, currentPage + 1))}
+            disabled={currentPage === numberOfPages - 1}
+            className="btn btn-sm bg-white border-green-900 text-green-900 hover:bg-green-50 disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
+      )}
+
       {/* --- MODALS --- */}
 
       {/* Review Modal */}
@@ -201,20 +232,15 @@ const MyPolicies = () => {
               <MessageSquare size={24} />
             </div>
             <div>
-              <h3 className="font-black text-xl text-[#00332c]">
-                Give Feedback
-              </h3>
+              <h3 className="font-black text-xl text-[#00332c]">Give Feedback</h3>
               <p className="text-xs text-gray-500 line-clamp-1">
                 Policy: {selectedPolicy?.policyTitle}
               </p>
             </div>
           </div>
-
           <form onSubmit={handleReviewSubmit} className="space-y-5">
             <div className="form-control">
-              <label className="label font-bold text-gray-700 text-sm">
-                Star Rating
-              </label>
+              <label className="label font-bold text-gray-700 text-sm">Star Rating</label>
               <div className="rating rating-lg gap-2">
                 {[1, 2, 3, 4, 5].map((num) => (
                   <input
@@ -229,15 +255,13 @@ const MyPolicies = () => {
               </div>
             </div>
             <div className="form-control">
-              <label className="label font-bold text-gray-700 text-sm">
-                Your Experience
-              </label>
+              <label className="label font-bold text-gray-700 text-sm">Your Experience</label>
               <textarea
                 name="feedback"
                 className="textarea textarea-bordered h-28 bg-gray-50 focus:outline-green-500 border-gray-200 rounded-xl"
-                placeholder="Share your thoughts about our service..."
+                placeholder="Share your thoughts..."
                 required
-              ></textarea>
+              />
             </div>
             <div className="modal-action">
               <button
@@ -266,79 +290,30 @@ const MyPolicies = () => {
         <div className="modal-box bg-white rounded-4xl p-0 overflow-hidden shadow-2xl max-w-lg">
           <div className="bg-[#00332c] p-6 text-white">
             <h3 className="font-black text-xl">Policy Summary</h3>
-            <p className="text-xs opacity-70 truncate">
-              {detailsPolicy?.policyTitle}
-            </p>
+            <p className="text-xs opacity-70 truncate">{detailsPolicy?.policyTitle}</p>
           </div>
-
           <div className="p-6 space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-gray-50 p-3 rounded-xl border border-gray-100">
-                <p className="text-[10px] uppercase font-bold text-gray-400">
-                  Nominee
-                </p>
-                <p className="font-bold text-[#00332c] truncate">
-                  {detailsPolicy?.nomineeName || "N/A"}
-                </p>
+                <p className="text-[10px] uppercase font-bold text-gray-400">Nominee</p>
+                <p className="font-bold text-[#00332c] truncate">{detailsPolicy?.nomineeName || "N/A"}</p>
               </div>
               <div className="bg-gray-50 p-3 rounded-xl border border-gray-100">
-                <p className="text-[10px] uppercase font-bold text-gray-400">
-                  Relation
-                </p>
+                <p className="text-[10px] uppercase font-bold text-gray-400">Relation</p>
                 <p className="font-bold text-[#00332c] text-sm">
-                  {detailsPolicy?.nomineeRelation ||
-                    detailsPolicy?.relation ||
-                    "N/A"}
+                  {detailsPolicy?.nomineeRelation || detailsPolicy?.relation || "N/A"}
                 </p>
               </div>
             </div>
-
-            <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
-              <p className="text-[10px] uppercase font-bold text-gray-400 mb-1">
-                Coverage Type
-              </p>
-              <p className="text-sm text-gray-700 font-medium">
-                Standard Life Protection
-              </p>
-            </div>
-
             <div className="bg-blue-50 p-4 rounded-xl border border-blue-100">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-[10px] uppercase font-bold text-blue-600">
-                    Assigned Agent
-                  </p>
-                  <p className="text-sm font-bold text-blue-900">
-                    {detailsPolicy?.agentName || "Waiting for admin..."}
-                  </p>
-                </div>
-                {detailsPolicy?.agentEmail && (
-                  <div className="badge badge-info text-[10px] text-white">
-                    Contacted
-                  </div>
-                )}
-              </div>
+              <p className="text-[10px] uppercase font-bold text-blue-600">Assigned Agent</p>
+              <p className="text-sm font-bold text-blue-900">{detailsPolicy?.agentName || "Waiting for admin..."}</p>
             </div>
-
             <div className="flex justify-between items-center pt-4 border-t border-dashed">
-              <div>
-                <p className="text-[10px] uppercase font-bold text-gray-400">
-                  Application Status
-                </p>
-                <span
-                  className={`badge font-bold p-3 mt-1 ${
-                    detailsPolicy?.status === "Rejected"
-                      ? "badge-error text-white"
-                      : "badge-warning"
-                  }`}
-                >
-                  {detailsPolicy?.status || "Processing"}
-                </span>
-              </div>
-              <button
-                onClick={() => document.getElementById("details-modal").close()}
-                className="btn btn-ghost btn-sm font-bold"
-              >
+              <span className={`badge font-bold p-3 ${detailsPolicy?.status === "Rejected" ? "badge-error text-white" : "badge-warning"}`}>
+                {detailsPolicy?.status || "Processing"}
+              </span>
+              <button onClick={() => document.getElementById("details-modal").close()} className="btn btn-ghost btn-sm font-bold">
                 Close
               </button>
             </div>

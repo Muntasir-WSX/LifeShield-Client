@@ -32,7 +32,7 @@ const AllPoliciesDetails = () => {
                             <img 
                                 src={policy?.image} 
                                 alt={policy?.title} 
-                                className="w-full h-80 object-cover rounded-[2rem] mb-10"
+                                className="w-full h-80 object-cover rounded-4xl mb-10"
                             />
                             <span className="bg-green-100 text-green-700 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest">
                                 {policy?.category}
