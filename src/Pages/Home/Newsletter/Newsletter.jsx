@@ -10,26 +10,27 @@ const Newsletter = () => {
     const axiosPublic = useAxiosPublic();
 
     const onSubmit = async (data) => {
-        try {
-            const res = await axiosPublic.post('/newsletter', data);
-            if (res.data.insertedId) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Subscribed!',
-                    text: 'Thank you for subscribing to our newsletter.',
-                    showConfirmButton: false,
-                    timer: 1500
-                });
-                reset(); 
-            }
-        } catch (error) {
+    try {
+        const res = await axiosPublic.post('/newsletter', data);
+        if (res.data.insertedId) {
             Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Something went wrong! Please try again.',
+                icon: 'success',
+                title: 'Subscribed!',
+                text: 'Welcome to our community!',
+                showConfirmButton: false,
+                timer: 1500
             });
+            reset(); 
         }
-    };
+    } catch (error) {
+        const errorMessage = error.response?.data?.message || 'Something went wrong!';
+        Swal.fire({
+            icon: 'info', 
+            title: 'Note',
+            text: errorMessage,
+        });
+    }
+};
 
     return (
         <section className="py-20 bg-white">
