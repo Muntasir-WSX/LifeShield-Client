@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Swal from "sweetalert2";
-import { Info, CheckCircle, XCircle, Clock } from "lucide-react";
+import { Info, CheckCircle, XCircle, Clock, ChevronLeft, ChevronRight } from "lucide-react";
 import useAxiosSecure from "../../../Hooks/UseAxiosSecure";
 import useAuth from "../../../Hooks/useAuth";
 
@@ -11,14 +11,25 @@ const AssignedCustomers = () => {
   const queryClient = useQueryClient();
   const [selectedCustomer, setSelectedCustomer] = useState(null);
 
-  const { data: assignments = [], isLoading } = useQuery({
-    queryKey: ["agent-assignments", user?.email],
+  // --- Pagination States ---
+  const [currentPage, setCurrentPage] = useState(0);
+  const itemsPerPage = 10;
+
+  const { data: assignmentsData, isLoading } = useQuery({
+    queryKey: ["agent-assignments", user?.email, currentPage],
     enabled: !!user?.email,
     queryFn: async () => {
-      const res = await axiosSecure.get(`/agent-applications/${user?.email}`);
+      const res = await axiosSecure.get(
+        `/agent-applications/${user?.email}?page=${currentPage}&size=${itemsPerPage}`
+      );
       return res.data;
     },
   });
+
+  const assignments = assignmentsData?.result || [];
+  const totalCount = assignmentsData?.count || 0;
+  const totalPages = Math.ceil(totalCount / itemsPerPage);
+  const pages = [...Array(totalPages).keys()];
 
   const statusMutation = useMutation({
     mutationFn: async ({ id, status, policyId }) => {
@@ -35,14 +46,14 @@ const AssignedCustomers = () => {
         text: "The application status has been locked and updated.",
         icon: "success",
         timer: 1500,
-        showConfirmButton: false
+        showConfirmButton: false,
       });
     },
   });
 
   const handleStatusChange = (id, newStatus, policyId) => {
     const actionText = newStatus === "Approved" ? "approve" : "reject";
-    
+
     Swal.fire({
       title: `Confirm ${newStatus}?`,
       text: `Once you ${actionText} this, you cannot change it again!`,
@@ -54,7 +65,6 @@ const AssignedCustomers = () => {
       if (result.isConfirmed) {
         statusMutation.mutate({ id, status: newStatus, policyId });
       } else {
-        // যদি ইউজার ক্যান্সেল করে, তবে রি-রেন্ডার করে ড্রপডাউন আগের অবস্থায় আনা
         queryClient.invalidateQueries(["agent-assignments"]);
       }
     });
@@ -89,38 +99,44 @@ const AssignedCustomers = () => {
           <tbody>
             {assignments.map((item) => {
               const isFinalized = item.status === "Approved" || item.status === "Rejected";
-              
+
               return (
                 <tr key={item._id} className="hover:bg-gray-50/50 border-b last:border-0 transition-colors">
                   <td className="py-4 px-6">
                     <div className="font-bold text-[#00332c]">{item.applicantName}</div>
                     <div className="text-[11px] opacity-60 font-medium tracking-tight">{item.applicantEmail}</div>
                   </td>
-                  <td className="font-semibold text-blue-600 text-xs">
-                    {item.policyTitle}
-                  </td>
+                  <td className="font-semibold text-blue-600 text-xs">{item.policyTitle}</td>
                   <td>
                     <select
                       className={`select select-xs select-bordered rounded-lg font-bold transition-all ${
-                        item.status === "Approved" ? "bg-green-50 text-green-700 border-green-200" :
-                        item.status === "Rejected" ? "bg-red-50 text-red-700 border-red-200" :
-                        "bg-orange-50 text-orange-700 border-orange-200"
+                        item.status === "Approved"
+                          ? "bg-green-50 text-green-700 border-green-200"
+                          : item.status === "Rejected"
+                          ? "bg-red-50 text-red-700 border-red-200"
+                          : "bg-orange-50 text-orange-700 border-orange-200"
                       }`}
                       defaultValue={item.status}
                       disabled={isFinalized}
                       onChange={(e) => handleStatusChange(item._id, e.target.value, item.policyId)}
                     >
-                      <option value="Paid" disabled={isFinalized}>Reviewing</option>
+                      <option value="Paid" disabled={isFinalized}>
+                        Reviewing
+                      </option>
                       <option value="Approved">Approve</option>
                       <option value="Rejected">Reject</option>
                     </select>
                   </td>
                   <td>
-                    <div className={`badge badge-sm font-black p-3 border-none gap-1 ${
-                      item.status === "Approved" ? "bg-emerald-100 text-emerald-700" :
-                      item.status === "Rejected" ? "bg-red-100 text-red-700" :
-                      "bg-orange-100 text-orange-700"
-                    }`}>
+                    <div
+                      className={`badge badge-sm font-black p-3 border-none gap-1 ${
+                        item.status === "Approved"
+                          ? "bg-emerald-100 text-emerald-700"
+                          : item.status === "Rejected"
+                          ? "bg-red-100 text-red-700"
+                          : "bg-orange-100 text-orange-700"
+                      }`}
+                    >
                       {item.status === "Approved" && <CheckCircle size={12} />}
                       {item.status === "Rejected" && <XCircle size={12} />}
                       {item.status === "Paid" && <Clock size={12} />}
@@ -143,7 +159,49 @@ const AssignedCustomers = () => {
             })}
           </tbody>
         </table>
+
+        {/* --- Empty State --- */}
+        {assignments.length === 0 && (
+          <div className="text-center py-20 text-gray-400 font-medium text-lg">
+            No assigned customers found.
+          </div>
+        )}
       </div>
+
+      {/* --- PAGINATION CONTROLS (Hobuho Matched Style) --- */}
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center gap-2 mt-8">
+          <button
+            onClick={() => setCurrentPage(Math.max(0, currentPage - 1))}
+            disabled={currentPage === 0}
+            className="btn btn-sm bg-white border-gray-300 text-gray-600 hover:bg-gray-100 disabled:opacity-50 h-10 w-10 p-0 rounded-lg"
+          >
+            <ChevronLeft size={18} />
+          </button>
+
+          {pages.map((page) => (
+            <button
+              key={page}
+              onClick={() => setCurrentPage(page)}
+              className={`btn btn-sm border-none transition-all h-10 px-4 rounded-lg ${
+                currentPage === page
+                  ? "bg-[#00332c] text-white"
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              }`}
+            >
+              {page + 1}
+            </button>
+          ))}
+
+          <button
+            onClick={() => setCurrentPage(Math.min(totalPages - 1, currentPage + 1))}
+            disabled={currentPage === totalPages - 1}
+            className="btn btn-sm bg-white border-gray-300 text-gray-600 hover:bg-gray-100 disabled:opacity-50 h-10 w-10 p-0 rounded-lg"
+          >
+            <ChevronRight size={18} />
+          </button>
+        </div>
+      )}
 
       {/* --- Details Modal --- */}
       <dialog id="details_modal" className="modal modal-bottom sm:modal-middle">
@@ -152,7 +210,7 @@ const AssignedCustomers = () => {
             <h3 className="font-black text-xl">Customer Profile</h3>
             <p className="text-xs opacity-70">Application ID: {selectedCustomer?._id}</p>
           </div>
-          
+
           <div className="p-8 grid grid-cols-1 gap-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-gray-50 p-3 rounded-xl">
