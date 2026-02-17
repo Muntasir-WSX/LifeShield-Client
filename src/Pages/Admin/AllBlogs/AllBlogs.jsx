@@ -1,25 +1,32 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Edit, Trash2, Plus, ArrowRight, Loader2, Mail, User } from 'lucide-react';
+import { Edit, Trash2, Plus, ArrowRight, Loader2, Mail, User, ChevronLeft, ChevronRight } from 'lucide-react';
 import Swal from 'sweetalert2';
 import useAxiosSecure from '../../../Hooks/UseAxiosSecure';
 import useAuth from '../../../Hooks/useAuth';
 import Loading from '../../../SharedComponents/Loading/Loading';
 
-const MyBlogs = () => {
+const AllBlogs = () => {
     const { user } = useAuth();
     const axiosSecure = useAxiosSecure();
     const queryClient = useQueryClient();
     const [uploading, setUploading] = useState(false);
     const [selectedBlog, setSelectedBlog] = useState(null);
+    
+    // Pagination States
+    const [currentPage, setCurrentPage] = useState(0);
+    const size = 10;
 
-    const { data: blogs = [], isLoading } = useQuery({
-        queryKey: ['my-blogs', user?.email],
+    const { data: { result: blogs = [], count = 0 } = {}, isLoading } = useQuery({
+        queryKey: ['my-blogs', user?.email, currentPage],
         queryFn: async () => {
-            const res = await axiosSecure.get(`/my-blogs/${user?.email}`);
+            const res = await axiosSecure.get(`/my-blogs/${user?.email}?page=${currentPage}&size=${size}`);
             return res.data;
         }
     });
+
+    const totalPages = Math.ceil(count / size);
+    const pages = [...Array(totalPages).keys()];
 
     const showToast = (message) => {
         Swal.fire({
@@ -83,7 +90,7 @@ const MyBlogs = () => {
                 image: imageUrl,
                 author: user?.displayName,
                 authorEmail: user?.email,
-                authorPhoto: user?.photoURL, // ইউজার ফটো যুক্ত করা হলো
+                authorPhoto: user?.photoURL,
                 date: selectedBlog ? selectedBlog.date : new Date().toISOString().split('T')[0],
                 total_visit: selectedBlog ? selectedBlog.total_visit : 0,
             };
@@ -112,17 +119,17 @@ const MyBlogs = () => {
     return (
         <div className="p-6 bg-gray-50 min-h-screen">
             {uploading && (
-                <div className="fixed inset-0 z-[9999] bg-white/60 backdrop-blur-sm flex flex-col items-center justify-center">
+                <div className="fixed inset-0 z-9999 bg-white/60 backdrop-blur-sm flex flex-col items-center justify-center">
                     <Loader2 className="animate-spin text-[#00332c]" size={50} />
                     <p className="font-black mt-4">PROCESSING...</p>
                 </div>
             )}
 
             {/* Header Section */}
-            <div className="flex flex-col md:flex-row justify-between items-center bg-white p-8 rounded-[2rem] shadow-sm mb-8 border border-gray-100">
+            <div className="flex flex-col md:flex-row justify-between items-center bg-white p-8 rounded-4xl shadow-sm mb-8 border border-gray-100">
                 <div>
-                    <h2 className="text-3xl font-black text-[#00332c]">My Article Studio</h2>
-                    <p className="text-gray-400 mt-1">Manage and publish your insurance insights</p>
+                    <h2 className="text-3xl font-black text-[#00332c]">Article Studio</h2>
+                    <p className="text-gray-400 mt-1">Manage and publish insurance insights</p>
                 </div>
                 <button onClick={() => document.getElementById('blog_modal').showModal()} className="btn bg-[#00332c] hover:bg-black text-white px-8 rounded-2xl h-14 mt-4 md:mt-0 shadow-lg shadow-emerald-900/10">
                     <Plus size={20} className="mr-2" /> Write New Post
@@ -130,7 +137,7 @@ const MyBlogs = () => {
             </div>
 
             {/* Articles Table */}
-            <div className="bg-white rounded-[2rem] overflow-hidden shadow-sm border border-gray-100">
+            <div className="bg-white rounded-4xl overflow-hidden shadow-sm border border-gray-100">
                 <div className="overflow-x-auto">
                     <table className="table w-full">
                         <thead className="bg-gray-50/50">
@@ -146,7 +153,7 @@ const MyBlogs = () => {
                                 <tr key={blog._id} className="hover:bg-gray-50/50 transition-colors">
                                     <td className="py-5 pl-8">
                                         <div className="flex items-center gap-4">
-                                            <div className="h-14 w-14 rounded-2xl overflow-hidden border border-gray-100 shadow-sm flex-shrink-0">
+                                            <div className="h-14 w-14 rounded-2xl overflow-hidden border border-gray-100 shadow-sm shrink-0">
                                                 <img src={blog.image} className="h-full w-full object-cover" alt="blog" />
                                             </div>
                                             <div>
@@ -193,19 +200,52 @@ const MyBlogs = () => {
                         </tbody>
                     </table>
                 </div>
+
+                {/* Pagination Controls */}
+                {count > size && (
+                    <div className="flex flex-wrap justify-center items-center gap-2 py-8 bg-gray-50/30">
+                        <button 
+                            disabled={currentPage === 0}
+                            onClick={() => setCurrentPage(currentPage - 1)}
+                            className="btn btn-sm btn-circle btn-ghost disabled:text-gray-300"
+                        >
+                            <ChevronLeft size={20} />
+                        </button>
+                        
+                        {pages.map(page => (
+                            <button
+                                key={page}
+                                onClick={() => setCurrentPage(page)}
+                                className={`btn btn-sm rounded-xl px-4 ${currentPage === page ? 'bg-[#00332c] text-white hover:bg-black' : 'btn-ghost text-gray-500'}`}
+                            >
+                                {page + 1}
+                            </button>
+                        ))}
+
+                        <button 
+                            disabled={currentPage === totalPages - 1}
+                            onClick={() => setCurrentPage(currentPage + 1)}
+                            className="btn btn-sm btn-circle btn-ghost disabled:text-gray-300"
+                        >
+                            <ChevronRight size={20} />
+                        </button>
+                    </div>
+                )}
+
                 {blogs.length === 0 && (
                     <div className="py-20 text-center flex flex-col items-center">
                         <div className="bg-gray-50 p-6 rounded-full mb-4">
                             <Plus size={40} className="text-gray-300" />
                         </div>
-                        <p className="text-gray-400 font-medium">You haven't published any articles yet.</p>
+                        <p className="text-gray-400 font-medium">No articles found.</p>
                     </div>
                 )}
             </div>
 
-            {/* Add/Edit Modal */}
+            {/* Add/Edit Modal (Same as before) */}
             <dialog id="blog_modal" className="modal modal-bottom sm:modal-middle">
-                <div className="modal-box max-w-2xl rounded-[2.5rem] p-10">
+                 {/* ... (Modal content stays same) ... */}
+                 <div className="modal-box max-w-2xl rounded-[2.5rem] p-10">
                     <h3 className="font-black text-3xl text-[#00332c] mb-6">{selectedBlog ? 'Refine Your Article' : 'Share Your Insight'}</h3>
                     <form id="blog_form" onSubmit={handleSubmit} className="space-y-5">
                         <div className="form-control">
@@ -235,4 +275,4 @@ const MyBlogs = () => {
     );
 };
 
-export default MyBlogs;
+export default AllBlogs;
